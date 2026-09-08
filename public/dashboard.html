@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>Panel del vendedor</title>
+  
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+  <link rel="stylesheet" href="dashboard.css" />
+  
+  <div class="dashboard">
+
+    <h1>Bienvenido a tu panel de control</h1>
+  <button class="btn active" onclick="mostrarSeccion('publicar')">
+    ➕ Publicar
+  </button>
+  <button class="btn" onclick="mostrarSeccion('productos')">
+    📦 Productos
+  </button>
+  <button class="btn" onclick="mostrarSeccion('ventas')">
+    💰 Ventas
+  </button>
+
+
+</div>
+    <div id="contenedor-secciones">
+
+      <!-- PUBLICAR -->
+      <div id="seccion-publicar" class="seccion" style="display:none;">
+        <div id="contenedorFormulario" class="oculto">
+          <h2>Publicar producto</h2>
+          <form id="formPublicarProducto">
+
+            <!-- FOTOS -->
+            <label>Fotos del producto</label>
+            <div class="drop-area" id="dropArea">
+              <p>📸 Arrastra fotos o haz clic</p>
+              <small>Sube entre 3 y 10 fotos claras</small>
+             <input type="file" id="fotosProducto" multiple accept="image/*" />
+            </div>
+            <div id="previewFotos" class="preview-fotos"></div>
+
+            <!-- TITULO -->
+            <label>Título</label>
+            <input
+              type="text"
+              id="titulo"
+              maxlength="80"
+              placeholder="Ej: Apple iPhone 13 mini - 128 GB - Azul (Desbloqueado)"
+              oninput="contadorTitulo()"
+              required
+            />
+            <small id="contadorTitulo">0/80 - Usa palabras clave: marca, modelo, capacidad...</small>
+            <small id="sugerenciaTitulo" style="color: #555;"></small>
+
+            <!-- PRECIO -->
+            <label>Precio (RD$)</label>
+            <input type="number" id="precio" placeholder="Ej: 18000" required />
+
+            <!-- CONDICION -->
+            <label>Condición</label>
+            <select id="condicion" required>
+              <option value="nuevo">Nuevo</option>
+              <option value="como_nuevo">Usado – Como nuevo</option>
+              <option value="buen_estado">Usado – Buen estado</option>
+              <option value="aceptable">Usado – Aceptable</option>
+            </select>
+
+            <!-- CATEGORIA -->
+<label>Categoría</label>
+<select id="categoriaProducto" onchange="cargarEspecificaciones()">
+  <option value="">Seleccionar</option>
+  <option value="telefonos">Teléfonos</option>
+  <option value="computadoras">Computadoras</option>
+  <option value="consolas">Consolas</option>
+  <option value="tv">Televisores</option>
+  <option value="carros">Carros</option>
+</select>
+
+<!-- DETALLES ESPECÍFICOS -->
+<div id="especificaciones" class="specs-box" style="display:none;">
+  <h3>📋 Detalles del producto</h3>
+  <p>Agrega detalles para que los compradores encuentren tu producto más rápido</p>
+
+  <div class="spec-grid">
+    <!-- aquí el JS inyecta los inputs -->
+  </div>
+</div>
+<label>Cantidad disponible</label>
+<input type="number" id="cantidad" min="1" placeholder="Ej: 5">
+            <!-- DESCRIPCION -->
+            <label>Descripción</label>
+            <textarea id="descripcion" placeholder="Describe el producto..." required></textarea>
+
+            <!-- TIPO VENTA -->
+            <label>Tipo de venta</label>
+            <select id="tipoVenta">
+              <option value="fijo">Precio fijo</option>
+            </select>
+
+            <!-- ENVIO -->
+            <h3>🚚 Envío</h3>
+            <label>Precio de envío</label>
+            <input type="number" id="precioEnvio" placeholder="Ej: 200" />
+            <label>País</label>
+            <select id="paisEnvio">
+              <option>República Dominicana</option>
+              <option>Estados Unidos</option>
+              <option>Internacional</option>
+            </select>
+            <label>Tiempo de entrega</label>
+            <select id="tiempoEntrega">
+              <option>1-2 días</option>
+              <option>1-3 días</option>
+              <option>3-5 días</option>
+              <option>5-7 días</option>
+            </select>
+
+            <!-- BARRA CALIDAD -->
+            <div class="calidad-box">
+              <h3>Calidad del anuncio</h3>
+              <div class="barra">
+                <div id="barraProgreso"></div>
+              </div>
+              <p id="estadoCalidad">Completa los campos para mejorar tu anuncio</p>
+            </div>
+
+            <!-- BOTON -->
+            <button type="button" onclick="publicarProducto()" class="publicar-btn">
+  Publicar producto
+</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- MIS PRODUCTOS -->
+      <div id="seccion-productos" class="seccion" style="display:none;">
+        <h2>📦 Mis productos</h2>
+        <div id="listaProductos"></div>
+      </div>
+
+      <!-- MIS VENTAS -->
+      <div id="seccion-ventas" class="seccion" style="display:none;">
+        <h2>💰 Mis ventas</h2>
+        <div id="listaVentas"></div>
+     </div>
+
+    </div>
+
+  <!-- Contenido principal -->
+  <div id="contenidoDashboard"></div>
+
+  <script src="sesion.js"></script>
+<script src="dashboard.js"></script>
+  <script>
+    protegerPagina();
+  </script>
+
+</body>
+</html>

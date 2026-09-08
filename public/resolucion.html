@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Centro de resolución</title>
+
+  <link rel="stylesheet" href="resolucion.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+  <main class="resolucion-container">
+
+    <!-- ENCABEZADO -->
+    <section class="encabezado">
+
+      <div>
+        <h1>Centro de resolución</h1>
+
+        <p>
+          Resuelve problemas relacionados con tus compras,
+          ventas, pagos y pedidos.
+        </p>
+      </div>
+
+      <div class="icono-encabezado">
+        🛡️
+      </div>
+
+    </section>
+
+
+    <!-- ACCIONES PRINCIPALES -->
+    <section class="acciones">
+
+      <div class="accion-card">
+
+        <div class="accion-icono">
+          🛒
+        </div>
+
+        <div class="accion-contenido">
+
+          <h2>Problema con una compra</h2>
+
+          <p>
+            Reporta un problema con un producto que compraste
+            o con un pedido que todavía no has recibido.
+          </p>
+
+          <button
+            class="btn-principal"
+            onclick="abrirCaso('compra')">
+
+            Reportar problema
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="accion-card">
+
+        <div class="accion-icono">
+          💰
+        </div>
+
+        <div class="accion-contenido">
+
+          <h2>Problema con un pago</h2>
+
+          <p>
+            Si tienes un problema con un pago, transferencia
+            o método de pago, puedes reportarlo aquí.
+          </p>
+
+          <button
+            class="btn-principal"
+            onclick="abrirCaso('pago')">
+
+            Reportar problema
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="accion-card">
+
+        <div class="accion-icono">
+          📦
+        </div>
+
+        <div class="accion-contenido">
+
+          <h2>Problema con un pedido</h2>
+
+          <p>
+            Reporta pedidos retrasados, productos incorrectos
+            o cualquier inconveniente con tu entrega.
+          </p>
+
+          <button
+            class="btn-principal"
+            onclick="abrirCaso('pedido')">
+
+            Reportar problema
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="accion-card">
+
+        <div class="accion-icono">
+          🔄
+        </div>
+
+        <div class="accion-contenido">
+
+          <h2>Devoluciones</h2>
+
+          <p>
+            Solicita ayuda con la devolución de un producto
+            o consulta el estado de una devolución.
+          </p>
+
+          <button
+            class="btn-secundario"
+            onclick="abrirCaso('devolucion')">
+
+            Solicitar devolución
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MIS CASOS -->
+    <section class="casos">
+
+      <div class="seccion-titulo">
+
+        <div>
+
+          <h2>Mis casos</h2>
+
+          <p>
+            Consulta los problemas que has reportado.
+          </p>
+
+        </div>
+
+        <span class="contador" id="contadorCasos">
+          0
+        </span>
+
+      </div>
+
+
+      <div id="listaCasos" class="lista-casos">
+
+        <div class="sin-casos">
+
+          <div class="sin-casos-icono">
+            📋
+          </div>
+
+          <h3>No tienes casos abiertos</h3>
+
+          <p>
+            Cuando reportes un problema aparecerá aquí.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- AYUDA -->
+    <section class="ayuda">
+
+      <div class="ayuda-icono">
+        💬
+      </div>
+
+      <div class="ayuda-contenido">
+
+        <h2>¿Necesitas más ayuda?</h2>
+
+        <p>
+          Si no encuentras una solución a tu problema,
+          puedes contactar con nuestro equipo de soporte.
+        </p>
+
+        <button
+          class="btn-soporte"
+          onclick="contactarSoporte()">
+
+          Contactar soporte
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- MODAL -->
+  <div
+    id="modalCaso"
+    class="modal">
+
+    <div class="modal-contenido">
+
+      <button
+        class="cerrar-modal"
+        onclick="cerrarModal()">
+
+        ×
+
+      </button>
+
+
+      <div class="modal-icono">
+        ⚠️
+      </div>
+
+
+      <h2 id="tituloModal">
+        Reportar problema
+      </h2>
+
+
+      <p id="descripcionModal">
+        Describe el problema que estás teniendo.
+      </p>
+
+
+      <form id="formCaso">
+
+        <input
+          type="hidden"
+          id="tipoCaso">
+
+
+        <label for="asunto">
+          Asunto
+        </label>
+
+        <input
+          type="text"
+          id="asunto"
+          placeholder="Ej: No recibí mi producto"
+          maxlength="100"
+          required>
+
+
+        <label for="descripcionCaso">
+          Describe el problema
+        </label>
+
+        <textarea
+          id="descripcionCaso"
+          placeholder="Explica detalladamente qué ocurrió..."
+          maxlength="1000"
+          required></textarea>
+
+
+        <label for="numeroPedido">
+          Número de pedido
+        </label>
+
+        <input
+          type="text"
+          id="numeroPedido"
+          placeholder="Ej: #100025">
+
+
+        <div class="modal-botones">
+
+          <button
+            type="button"
+            class="btn-cancelar"
+            onclick="cerrarModal()">
+
+            Cancelar
+
+          </button>
+
+          <button
+            type="submit"
+            class="btn-enviar">
+
+            Enviar caso
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="mensajeResolucion"
+    class="mensaje">
+  </div>
+
+
+  <script src="sesion.js"></script>
+<script src="resolucion.js"></script>
+
+</body>
+
+</html>

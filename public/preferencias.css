@@ -1,0 +1,313 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+  background: #f5f6f8;
+  color: #111827;
+}
+
+.preferencias-container {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.encabezado {
+  margin-bottom: 25px;
+}
+
+.encabezado h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.encabezado p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+
+/* =========================
+   TARJETAS
+========================= */
+
+.preferencia-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 12px;
+
+  padding: 22px;
+
+  margin-bottom: 15px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.preferencia-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+}
+
+
+/* =========================
+   ICONOS
+========================= */
+
+.icono {
+  width: 48px;
+  height: 48px;
+
+  min-width: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f1f5ff;
+
+  border-radius: 10px;
+
+  font-size: 23px;
+}
+
+
+/* =========================
+   INFORMACIÓN
+========================= */
+
+.preferencia-info {
+  flex: 1;
+}
+
+.preferencia-info h2 {
+  margin: 0 0 6px;
+
+  font-size: 17px;
+
+  font-weight: 600;
+}
+
+.preferencia-info p {
+  margin: 0 0 14px;
+
+  color: #6b7280;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================
+   SELECT
+========================= */
+
+.preferencia-info select {
+  width: 230px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #111827;
+
+  font-size: 14px;
+
+  outline: none;
+
+  cursor: pointer;
+}
+
+.preferencia-info select:focus {
+  border-color: #3665f3;
+
+  box-shadow:
+    0 0 0 3px rgba(54, 101, 243, 0.12);
+}
+
+
+/* =========================
+   SWITCH
+========================= */
+
+.switch {
+  position: relative;
+
+  display: inline-block;
+
+  width: 48px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+
+  inset: 0;
+
+  background: #d1d5db;
+
+  border-radius: 30px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.slider::before {
+  content: "";
+
+  position: absolute;
+
+  width: 20px;
+  height: 20px;
+
+  left: 3px;
+  top: 3px;
+
+  background: white;
+
+  border-radius: 50%;
+
+  transition: 0.2s;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.switch input:checked + .slider {
+  background: #3665f3;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(22px);
+}
+
+
+/* =========================
+   ACCIONES
+========================= */
+
+.acciones {
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: 25px;
+}
+
+#btnGuardar {
+  border: none;
+
+  background: #3665f3;
+
+  color: white;
+
+  padding: 12px 22px;
+
+  border-radius: 7px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+#btnGuardar:hover {
+  background: #274bdb;
+}
+
+#btnGuardar:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================
+   MENSAJE
+========================= */
+
+.mensaje {
+  margin-top: 18px;
+
+  padding: 12px 15px;
+
+  border-radius: 7px;
+
+  font-size: 14px;
+}
+
+.mensaje.exito {
+  background: #ecfdf3;
+
+  color: #16794a;
+
+  border: 1px solid #b7ebce;
+}
+
+.mensaje.error {
+  background: #fff1f2;
+
+  color: #be123c;
+
+  border: 1px solid #fecdd3;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 15px;
+  }
+
+  .preferencia-card {
+    align-items: flex-start;
+  }
+
+  .preferencia-info select {
+    width: 100%;
+  }
+
+  .acciones {
+    justify-content: stretch;
+  }
+
+  #btnGuardar {
+    width: 100%;
+  }
+
+}

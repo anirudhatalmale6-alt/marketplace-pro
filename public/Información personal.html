@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Información personal</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#0f172a;
+  padding:40px;
+}
+
+.container{
+  background:white;
+  padding:30px;
+  max-width:800px;
+  margin:auto;
+  border-radius:8px;
+}
+
+h2{
+  margin-bottom:30px;
+}
+
+.section{
+  border-top:1px solid #ddd;
+  padding:20px 0;
+}
+
+label{
+  font-weight:bold;
+  display:block;
+  margin-bottom:5px;
+}
+
+input, select{
+  width:100%;
+  padding:8px;
+  margin-bottom:10px;
+}
+
+button{
+  padding:8px 15px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#1d4ed8;
+}
+
+.success{
+  color:green;
+  margin-top:10px;
+}
+</style>
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Personal info</h2>
+
+<form id="personalForm">
+
+<div class="section">
+  <label>Username</label>
+  <input type="text" id="username">
+
+  <label>Account type</label>
+  <select id="accountType">
+    <option value="Individual">Individual</option>
+    <option value="Business">Business</option>
+  </select>
+</div>
+
+<div class="section">
+  <label>Email</label>
+  <input type="email" id="email">
+
+  <label>Phone number</label>
+  <input type="text" id="phone">
+</div>
+
+<div class="section">
+  <label>Owner name</label>
+  <input type="text" id="ownerName">
+
+  <label>Address</label>
+  <input type="text" id="address">
+</div>
+
+<button type="submit">Guardar cambios</button>
+
+<p class="success" id="message"></p>
+
+</form>
+
+</div>
+
+<script src="sesion.js"></script>
+<script>
+
+// Cargar datos guardados
+window.onload = function(){
+  const data = JSON.parse(localStorage.getItem("personalInfo"));
+
+  if(data){
+    document.getElementById("username").value = data.username || "";
+    document.getElementById("accountType").value = data.accountType || "Individual";
+    document.getElementById("email").value = data.email || "";
+    document.getElementById("phone").value = data.phone || "";
+    document.getElementById("ownerName").value = data.ownerName || "";
+    document.getElementById("address").value = data.address || "";
+  }
+};
+
+// Guardar datos
+document.getElementById("personalForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const personalData = {
+    username: document.getElementById("username").value,
+    accountType: document.getElementById("accountType").value,
+    email: document.getElementById("email").value,
+    phone: document.getElementById("phone").value,
+    ownerName: document.getElementById("ownerName").value,
+    address: document.getElementById("address").value
+  };
+
+  localStorage.setItem("personalInfo", JSON.stringify(personalData));
+
+  document.getElementById("message").textContent = "Información guardada correctamente ✔";
+});
+</script>
+<script src="script.js"></script>
+
+<script>
+protegerPagina();
+</script>
+</body>
+</html>

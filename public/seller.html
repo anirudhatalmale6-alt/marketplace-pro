@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil del vendedor</title>
+  <link rel="stylesheet" href="chat.css">
+  <link rel="stylesheet" href="seller.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+
+<div class="seller-container">
+
+  <div class="seller-header">
+
+    <div class="seller-avatar" id="sellerAvatar">
+      👤
+    </div>
+
+    <div class="seller-info">
+
+      <h1 id="sellerName"></h1>
+
+      <p id="sellerEmail"></p>
+
+      <p id="sellerUsername"></p>
+      
+
+      <p id="sellerJoined"></p>
+
+      <p id="sellerTotalProducts"></p>
+
+    </div>
+
+    <div class="seller-rating">
+
+      ⭐⭐⭐⭐⭐
+
+      <span id="sellerReputation">
+        100% reputación positiva
+      </span>
+
+      <button id="followBtn" onclick="seguirVendedor()">
+        ➕ Seguir vendedor
+      </button>
+
+      <p id="followersCount">
+  👥 0 seguidores
+</p>
+
+<button id="contactSellerBtn">
+  💬 Contactar vendedor
+</button>
+
+    </div>
+
+  </div>
+<h2>🛒 Productos publicados</h2>
+
+<div id="sellerInfo"></div>
+
+<div id="sellerProducts" class="products-grid">
+</div>
+
+<div class="reviews-section">
+
+<h2>
+⭐ Comentarios de compradores
+</h2>
+
+<div class="review-form">
+
+
+<textarea
+id="reviewInput"
+placeholder="Escribe un comentario...">
+</textarea>
+
+<div class="stars-input">
+
+<span class="activa" onclick="setRating(1)">⭐</span>
+
+<span class="activa" onclick="setRating(2)">⭐</span>
+
+<span class="activa" onclick="setRating(3)">⭐</span>
+
+<span class="activa" onclick="setRating(4)">⭐</span>
+
+<span class="activa" onclick="setRating(5)">⭐</span>
+
+</div>
+
+<button
+type="button"
+onclick="agregarReview()">
+
+💬 Publicar comentario
+
+</button>
+
+</div>
+
+<div id="reviewsContainer">
+
+  <p>
+    Aún no hay comentarios.
+  </p>
+
+</div>
+
+</div> <!-- reviews-section -->
+
+
+
+<div id="pagination" class="pagination"></div>
+
+</div> <!-- seller-container -->
+
+<!-- CHAT -->
+<div id="chatBox" class="chat-box">
+
+<div class="chat-header">
+
+<div>
+💬 Chat sobre <span id="chatProductoNombre"></span>
+</div>
+
+<div class="chat-controles">
+<span onclick="minimizarChat()">➖</span>
+<span onclick="cerrarChat()">✖</span>
+</div>
+
+</div>
+
+<div id="listaConversaciones"
+class="lista-conversaciones">
+</div>
+
+<div id="chatMensajes"
+class="chat-mensajes">
+</div>
+
+<!-- BOTON FINALIZAR CHAT -->
+<div class="chat-finalizar">
+<button onclick="finalizarChat()">Finalizar chat</button>
+</div>
+
+<div class="chat-input">
+<input type="text" id="mensajeInput" placeholder="Escribe un mensaje">
+<button onclick="enviarMensaje()">➤</button>
+</div>
+
+</div>
+
+
+
+<script src="sesion.js"></script>
+<script src="seller.js"></script>
+<script src="chat.js"></script>
+
+</body>
+</html>

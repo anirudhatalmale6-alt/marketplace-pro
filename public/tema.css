@@ -1,0 +1,227 @@
+/* =========================
+   TEMA GLOBAL
+========================= */
+
+
+/* =========================
+   CLARO
+========================= */
+
+:root {
+
+  --fondo-principal: #ffffff;
+
+  --fondo-secundario: #f5f6f8;
+
+  --fondo-card: #ffffff;
+
+  --texto-principal: #111827;
+
+  --texto-secundario: #6b7280;
+
+  --borde: #e5e7eb;
+
+  --entrada: #ffffff;
+
+}
+
+
+/* =========================
+   OSCURO
+========================= */
+
+html[data-tema="oscuro"] {
+
+  --fondo-principal: #111827;
+
+  --fondo-secundario: #0f172a;
+
+  --fondo-card: #1f2937;
+
+  --texto-principal: #f9fafb;
+
+  --texto-secundario: #9ca3af;
+
+  --borde: #374151;
+
+  --entrada: #111827;
+
+}
+
+
+/* =========================
+   ELEMENTOS GENERALES
+========================= */
+
+html[data-tema="oscuro"] body {
+
+  background: var(--fondo-secundario) !important;
+
+  color: var(--texto-principal) !important;
+
+}
+
+
+/* CARDS */
+
+html[data-tema="oscuro"] .card,
+html[data-tema="oscuro"] .config-card,
+html[data-tema="oscuro"] .preferencia-card,
+html[data-tema="oscuro"] .direccion-card,
+html[data-tema="oscuro"] .metodo-pago,
+html[data-tema="oscuro"] .seccion-pagos,
+html[data-tema="oscuro"] .datos-card,
+html[data-tema="oscuro"] .informacion,
+html[data-tema="oscuro"] .informacion-comentarios,
+html[data-tema="oscuro"] .casos,
+html[data-tema="oscuro"] .accion-card {
+
+  background: var(--fondo-card) !important;
+
+  border-color: var(--borde) !important;
+
+  color: var(--texto-principal) !important;
+
+}
+
+
+/* TEXTOS */
+
+html[data-tema="oscuro"] h1,
+html[data-tema="oscuro"] h2,
+html[data-tema="oscuro"] h3,
+html[data-tema="oscuro"] h4,
+html[data-tema="oscuro"] p,
+html[data-tema="oscuro"] label,
+html[data-tema="oscuro"] span {
+
+  color: var(--texto-principal);
+
+}
+
+
+/* TEXTOS SECUNDARIOS */
+
+html[data-tema="oscuro"] .subtitulo,
+html[data-tema="oscuro"] .config-info p,
+html[data-tema="oscuro"] .preferencia-info p,
+html[data-tema="oscuro"] .metodo-contenido p,
+html[data-tema="oscuro"] .direccion-header p,
+html[data-tema="oscuro"] .card-top p,
+html[data-tema="oscuro"] small {
+
+  color: var(--texto-secundario) !important;
+
+}
+
+
+/* INPUTS Y SELECTS */
+
+html[data-tema="oscuro"] input,
+html[data-tema="oscuro"] textarea,
+html[data-tema="oscuro"] select {
+
+  background: var(--entrada) !important;
+
+  color: var(--texto-principal) !important;
+
+  border-color: var(--borde) !important;
+
+}
+
+
+/* PLACEHOLDER */
+
+html[data-tema="oscuro"] input::placeholder,
+html[data-tema="oscuro"] textarea::placeholder {
+
+  color: #6b7280 !important;
+
+}
+
+
+/* TABLAS */
+
+html[data-tema="oscuro"] table {
+
+  color: var(--texto-principal);
+
+}
+
+html[data-tema="oscuro"] th {
+
+  background: #111827 !important;
+
+  color: #f9fafb !important;
+
+}
+
+html[data-tema="oscuro"] td {
+
+  border-color: var(--borde) !important;
+
+}
+
+
+/* MENUS */
+
+html[data-tema="oscuro"] .menu,
+html[data-tema="oscuro"] .btn {
+
+  background: var(--fondo-card);
+
+  color: var(--texto-principal);
+
+  border-color: var(--borde);
+
+}
+
+
+/* BOTONES BLANCOS */
+
+html[data-tema="oscuro"] .btn-config,
+html[data-tema="oscuro"] .btn-secundario,
+html[data-tema="oscuro"] .btn-cancelar {
+
+  background: #1f2937 !important;
+
+  color: #f9fafb !important;
+
+  border-color: #4b5563 !important;
+
+}
+
+
+/* MODALES */
+
+html[data-tema="oscuro"] .modal-contenido,
+html[data-tema="oscuro"] .modal {
+
+  color: var(--texto-principal);
+
+}
+
+
+/* SCROLL SUAVE */
+
+html {
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+
+}
+
+body,
+.config-card,
+.card,
+.preferencia-card,
+.direccion-card,
+.metodo-pago {
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+
+}

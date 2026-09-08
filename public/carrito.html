@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<a href="index.html" class="logo">web xxx</a>
+<title>web xxx</title>
+<link rel="stylesheet" href="tema.css">
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:0;
+padding-top:80px;
+}
+
+header{
+position:fixed;
+top:0;
+width:100%;
+background:white;
+padding:15px 30px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.container{
+padding:40px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+margin-bottom:15px;
+display:flex;
+align-items:center;
+gap:15px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 10px 20px rgba(0,0,0,0.15);
+}
+
+.card img{
+width:80px;
+border-radius:6px;
+}
+
+button{
+padding:8px 12px;
+border:none;
+background:#2d46d6;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.85;
+}
+
+.btn-finalizar{
+background:#2d46d6;
+margin-top:20px;
+padding:12px 20px;
+}
+
+.total{
+font-size:20px;
+font-weight:bold;
+margin-top:20px;
+}
+
+#carritoLink{
+font-weight:bold;
+color:#3665f3;
+}
+
+#carritoCantidad{
+background:#3665f3;
+color:white;
+border-radius:50%;
+padding:3px 7px;
+font-size:12px;
+margin-left:4px;
+}
+
+.volando{
+position:fixed;
+width:80px;
+height:80px;
+z-index:2000;
+pointer-events:none;
+transition:all 0.7s ease;
+border-radius:10px;
+}
+
+/* PANEL CARRITO */
+
+.carrito-panel{
+position:fixed;
+top:0;
+right:-400px;
+width:350px;
+height:100%;
+background:white;
+box-shadow:-5px 0 15px rgba(0,0,0,0.2);
+z-index:3000;
+transition:0.3s;
+display:flex;
+flex-direction:column;
+}
+
+.carrito-panel.abierto{
+right:0;
+}
+
+.carrito-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+border-bottom:1px solid #eee;
+font-weight:bold;
+}
+
+.carrito-productos{
+padding:15px;
+overflow-y:auto;
+flex:1;
+}
+
+.item-carrito{
+display:flex;
+align-items:center;
+margin-bottom:10px;
+border-bottom:1px solid #eee;
+padding-bottom:10px;
+}
+
+.item-carrito img{
+width:50px;
+height:50px;
+object-fit:cover;
+margin-right:10px;
+border-radius:5px;
+}
+
+
+
+
+</style>
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+<header>
+ 
+<h2>🛒 Tu carrito</h2>
+
+
+</header>
+
+
+
+<div class="container">
+
+<div id="listaCarrito">
+Tu carrito está vacío
+</div>
+
+<div class="total" id="total"></div>
+
+<button class="btn-finalizar" onclick="finalizarCompra()">
+💳 Finalizar compra
+</button>
+
+</div>
+<script src="sesion.js"></script>
+<script src="tema.js"></script>
+<script src="carrito.js"></script>
+<script src="script.js"></script>
+
+<script>
+protegerPagina();
+</script>
+</body>
+</html>

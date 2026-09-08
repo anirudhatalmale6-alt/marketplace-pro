@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Configuración</title>
+
+<link rel="stylesheet" href="configuracion.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+  <div class="configuracion-container">
+
+    <h1>Configuración</h1>
+
+    <p class="subtitulo">
+      Administra las preferencias de tu cuenta.
+    </p>
+
+
+    <!-- =========================
+         NOTIFICACIONES
+    ========================== -->
+
+    <div class="config-card">
+
+      <div class="config-info">
+        <h3>Notificaciones</h3>
+
+        <p>
+          Recibe avisos sobre tus compras, ventas y actividad.
+        </p>
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          id="notificaciones"
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <!-- =========================
+         NOTIFICACIONES POR CORREO
+    ========================== -->
+
+    <div class="config-card">
+
+      <div class="config-info">
+
+        <h3>Notificaciones por correo</h3>
+
+        <p>
+          Recibe información importante de web xxx en tu correo.
+        </p>
+
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          id="correoNotificaciones"
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <!-- =========================
+         APARIENCIA
+    ========================== -->
+
+    <div class="config-card">
+
+      <div class="config-info">
+
+        <h3>Apariencia</h3>
+
+        <p>
+          Selecciona cómo quieres visualizar web xxx.
+        </p>
+
+      </div>
+
+      <select id="apariencia">
+
+        <option value="claro">
+          Claro
+        </option>
+
+        <option value="oscuro">
+          Oscuro
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- =========================
+         IDIOMA
+    ========================== -->
+
+    <div class="config-card">
+
+      <div class="config-info">
+
+        <h3>Idioma</h3>
+
+        <p>
+          Selecciona el idioma de la plataforma.
+        </p>
+
+      </div>
+
+      <select id="idioma">
+
+        <option value="es">
+          Español
+        </option>
+
+        <option value="en">
+          English
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- =========================
+         PRIVACIDAD
+    ========================== -->
+
+    <div class="config-card">
+
+      <div class="config-info">
+
+        <h3>Privacidad</h3>
+
+        <p>
+          Controla cómo se utiliza la información de tu cuenta.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        id="btnPrivacidad"
+        class="btn-config"
+      >
+        Administrar
+      </button>
+
+    </div>
+
+
+    <!-- =========================
+         CERRAR CUENTA
+    ========================== -->
+
+    <div class="config-card peligro">
+
+      <div class="config-info">
+
+        <h3>Cerrar cuenta</h3>
+
+        <p>
+          Elimina permanentemente tu cuenta de web xxx.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        id="btnCerrarCuenta"
+        class="btn-peligro"
+      >
+        Cerrar cuenta
+      </button>
+
+    </div>
+
+
+  </div>
+
+  <script src="sesion.js"></script>
+<script src="configuracion.js"></script>
+
+</body>
+</html>

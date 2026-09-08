@@ -1,0 +1,445 @@
+/* =========================
+   ADAPTACION A MOVIL Y TABLET
+
+   Este archivo se carga EL ULTIMO en todas las paginas, para que sus
+   reglas ganen a las anteriores sin tener que tocarlas.
+
+   El problema que resuelve: el sitio estaba maquetado solo para
+   pantalla de ordenador. Los contenedores tenian anchos fijos en
+   pixeles (la columna de filtros 220px, el chat 350px, tarjetas de
+   500px...), asi que en un telefono de 390px el contenido se salia de
+   la pantalla y quedaba cortado por la derecha.
+
+   Aqui NO se cambia el diseno de escritorio: todo va dentro de
+   @media, o son reglas que solo evitan desbordes.
+========================= */
+
+/* =========================
+   BASE - vale para cualquier tamano
+========================= */
+
+*,
+*::before,
+*::after {
+  /* Que el padding no sume ancho: es la causa numero uno de que un
+     bloque de "width:100%" acabe siendo mas ancho que la pantalla */
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  /* Nada puede empujar la pagina a lo ancho */
+  overflow-x: hidden;
+}
+
+img,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Palabras largas (correos, URLs) que rompian la caja */
+p,
+h1,
+h2,
+h3,
+h4,
+a,
+td,
+li,
+label {
+  overflow-wrap: anywhere;
+}
+
+/* Tablas anchas: que scrolleen ellas, no la pagina */
+table {
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
+}
+
+/* =========================
+   BARRA SUPERIOR EN ESCRITORIO
+
+   El buscador esta colocado con position:absolute, left:50% y un ancho
+   fijo de 600px. A partir de cierto ancho de pantalla se monta encima
+   de "Iniciar Sesion" y "Crear Cuenta" (se ve incluso en un portatil
+   de 1280px). Se limita su ancho a lo que quepa de verdad.
+========================= */
+
+@media (min-width: 901px) {
+  /* El arreglo no es estrechar el buscador a ojo, sino sacarlo del
+     position:absolute: la barra ya es flex, asi que el buscador puede
+     ocupar el hueco REAL que queda entre el logo y el menu, sea cual
+     sea el ancho de la pantalla o lo largo que sea el menu. */
+  .search-container {
+    position: static;
+    transform: none;
+    flex: 1 1 auto;
+    width: auto;
+    max-width: 600px;
+    margin: 0 24px;
+  }
+
+  /* Que el logo y el menu no se encojan y aprieten al buscador */
+  .topbar > .logo,
+  .topbar > .menu {
+    flex: 0 0 auto;
+  }
+}
+
+/* =========================
+   TABLET  (hasta 900px)
+========================= */
+
+@media (max-width: 900px) {
+  .container,
+  .account-container {
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  /* Filtros y productos dejan de ir uno al lado del otro.
+     El contenedor de la portada se llama .marketplace; .container es
+     solo el margen exterior. */
+  .marketplace,
+  .container,
+  .account-container {
+    flex-direction: column;
+  }
+
+  .filtros,
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .sidebar {
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+
+  .content {
+    padding-left: 0;
+  }
+
+  .productos-container {
+    width: 100%;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+
+  .products {
+    padding: 20px;
+  }
+
+  /* Pagina de producto.
+
+     La rejilla era "90px minmax(400px,1fr) 380px": eso son 870px como
+     minimo, asi que en una tablet de 768px ya se salia por la derecha
+     (la foto grande era lo que sobresalia). En pantallas estrechas
+     pasa a una sola columna: miniaturas, foto e informacion. */
+  .producto-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .producto-container {
+    padding: 14px;
+  }
+
+  .imagen-zoom-container {
+    height: auto;
+    max-height: 60vh;
+  }
+
+  .imagen-principal {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* La lupa de la foto funciona siguiendo el raton (scale(2) segun
+     donde apuntas). En una pantalla tactil no hay raton, y al tocar
+     la foto se quedaba ampliada y descolocada. */
+  @media (hover: none) {
+    .imagen-principal {
+      transform: none !important;
+    }
+  }
+
+  /* Las miniaturas dejan de ir en columna y se ponen en fila */
+  .miniaturas {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .miniatura {
+    width: 62px;
+    height: 62px;
+    object-fit: cover;
+  }
+}
+
+/* =========================
+   MOVIL  (hasta 640px)
+========================= */
+
+@media (max-width: 640px) {
+  body {
+    font-size: 15px;
+  }
+
+  /* --- Barra superior ---
+
+     .topbar es fixed y dentro lleva el buscador con position:absolute
+     y 600px fijos. En un telefono eso tapaba el logo y el menu.
+     Aqui la barra pasa a tres filas: logo + menu arriba, buscador
+     debajo, ocupando todo el ancho. */
+  .topbar,
+  header,
+  .navbar {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    gap: 8px;
+    row-gap: 8px;
+  }
+
+  .topbar .logo,
+  header .logo {
+    font-size: 19px;
+  }
+
+  .search-container,
+  .search-box {
+    position: static;
+    transform: none;
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    flex: 1 0 100%;
+    margin: 0;
+  }
+
+  .search-container input,
+  .search-box input {
+    min-width: 0;
+    padding: 9px 12px;
+    font-size: 15px;
+  }
+
+  .search-container select {
+    max-width: 92px;
+  }
+
+  .search-container button,
+  .search-box button {
+    padding: 9px 14px;
+    white-space: nowrap;
+  }
+
+  /* Los resultados del buscador no deben salirse */
+  #resultadosBusqueda {
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+
+  .menu,
+  header nav,
+  .header-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .menu a,
+  nav a {
+    margin-left: 0;
+    font-size: 14px;
+  }
+
+  /* La barra ahora es mas alta: el contenido empezaba debajo de una
+     barra de 80px y quedaba tapado */
+  body {
+    padding-top: 128px;
+  }
+
+  /* Cajon lateral del carrito: a pantalla completa */
+  .carrito-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* --- Filtros: en horizontal, ocupando poco --- */
+  .filtros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    padding: 12px;
+  }
+
+  .filtros h3,
+  .filtros > h4 {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  .filtros label {
+    margin-top: 6px;
+    font-size: 13px;
+  }
+
+  /* --- Rejilla de productos: dos columnas --- */
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .producto,
+  .card {
+    min-width: 0;
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  /* Los hijos de una tarjeta en flex no encogen por defecto
+     (min-width:auto), asi que la tarjeta acababa siendo mas ancha que
+     la pantalla. Esto pasaba en el carrito. */
+  .card > *,
+  .producto > *,
+  .compra > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .card {
+    flex-wrap: wrap;
+  }
+
+  .producto h3,
+  .card h3,
+  .card h4 {
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .producto .precio {
+    font-size: 16px;
+  }
+
+  .producto img,
+  .card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+
+  /* --- Tarjetas en fila (carrito, historial, pedidos) --- */
+  .compra,
+  .activity-item,
+  .item-carrito,
+  .producto-checkout {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .compra img,
+  .activity-item img,
+  .item-carrito img {
+    width: 100%;
+    max-width: 220px;
+  }
+
+  /* --- Checkout y paneles a dos columnas --- */
+  .checkout-grid,
+  .grid-2,
+  .dos-columnas {
+    display: block;
+  }
+
+  .checkout-grid > * + * {
+    margin-top: 18px;
+  }
+
+  /* --- Formularios --- */
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+    font-size: 16px; /* evita que el iPhone haga zoom al enfocar */
+  }
+
+  form,
+  .card,
+  .form-card,
+  .caja,
+  .panel {
+    width: auto;
+    max-width: 100%;
+  }
+
+  /* --- Panel de vendedor: pestanas que no se salgan --- */
+  .btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  /* --- Chat flotante: tenia 350px fijos --- */
+  #chatBox,
+  .chat-box,
+  .chat-container {
+    width: calc(100vw - 24px);
+    max-width: 100%;
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+  }
+
+  /* --- Paginacion --- */
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  /* --- Todo lo que llevaba un ancho fijo en pixeles --- */
+  .sidebar,
+  .content,
+  .activity-container,
+  .account-container,
+  .productos-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* =========================
+   MOVIL PEQUENO  (hasta 400px)
+========================= */
+
+@media (max-width: 400px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .container,
+  .products {
+    padding: 12px;
+  }
+}

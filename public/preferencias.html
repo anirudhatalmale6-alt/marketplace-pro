@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Preferencias de cuenta</title>
+
+  <link rel="stylesheet" href="preferencias.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+  <div class="preferencias-container">
+
+    <div class="encabezado">
+      <h1>Preferencias de cuenta</h1>
+      <p>
+        Personaliza cómo quieres utilizar web xxx.
+      </p>
+    </div>
+
+
+    <!-- IDIOMA -->
+
+    <section class="preferencia-card">
+
+      <div class="icono">
+        🌐
+      </div>
+
+      <div class="preferencia-info">
+
+        <h2>Idioma</h2>
+
+        <p>
+          Selecciona el idioma que quieres utilizar
+          en web xxx.
+        </p>
+
+        <select id="idioma">
+
+          <option value="es">
+            Español
+          </option>
+
+          <option value="en">
+            English
+          </option>
+
+        </select>
+
+      </div>
+
+    </section>
+
+
+    <!-- APARIENCIA -->
+
+    <section class="preferencia-card">
+
+      <div class="icono">
+        🎨
+      </div>
+
+      <div class="preferencia-info">
+
+        <h2>Apariencia</h2>
+
+        <p>
+          Selecciona cómo quieres visualizar
+          web xxx.
+        </p>
+
+        <select id="apariencia">
+
+          <option value="claro">
+            Claro
+          </option>
+
+          <option value="oscuro">
+            Oscuro
+          </option>
+
+        </select>
+
+      </div>
+
+    </section>
+
+
+    <!-- NOTIFICACIONES -->
+
+    <section class="preferencia-card">
+
+      <div class="icono">
+        🔔
+      </div>
+
+      <div class="preferencia-info">
+
+        <h2>Notificaciones</h2>
+
+        <p>
+          Recibe avisos importantes relacionados
+          con tu cuenta.
+        </p>
+
+        <label class="switch">
+
+          <input
+            type="checkbox"
+            id="notificaciones"
+            checked
+          >
+
+          <span class="slider"></span>
+
+        </label>
+
+      </div>
+
+    </section>
+
+
+    <!-- CORREOS -->
+
+    <section class="preferencia-card">
+
+      <div class="icono">
+        ✉️
+      </div>
+
+      <div class="preferencia-info">
+
+        <h2>Correos electrónicos</h2>
+
+        <p>
+          Permite recibir notificaciones y
+          novedades de web xxx por correo.
+        </p>
+
+        <label class="switch">
+
+          <input
+            type="checkbox"
+            id="correoNotificaciones"
+            checked
+          >
+
+          <span class="slider"></span>
+
+        </label>
+
+      </div>
+
+    </section>
+
+
+    <!-- GUARDAR -->
+
+    <div class="acciones">
+
+      <button
+        id="btnGuardar"
+        type="button"
+      >
+        Guardar preferencias
+      </button>
+
+    </div>
+
+
+    <!-- MENSAJE -->
+
+    <div
+      id="mensajePreferencias"
+      class="mensaje"
+      style="display:none;"
+    ></div>
+
+  </div>
+
+
+  <script src="sesion.js"></script>
+<script src="preferencias.js"></script>
+
+</body>
+
+</html>

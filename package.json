@@ -1,0 +1,35 @@
+{
+  "name": "marketplace-pro",
+  "version": "2.0.0",
+  "description": "Marketplace: usuarios, anuncios, carrito y pedidos",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "migrar": "node scripts/migrar.js",
+    "test": "node tests/api.js",
+    "limpiar-pruebas": "node scripts/limpiar-pruebas.js",
+    "arreglar-texto": "node scripts/arreglar-texto.js",
+    "preparar-html": "node scripts/preparar-html.js && node scripts/enlazar-responsive.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.1.0",
+    "mongoose": "^9.2.3",
+    "multer": "^2.1.1"
+  }
+}

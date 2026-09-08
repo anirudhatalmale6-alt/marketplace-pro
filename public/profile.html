@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mi Perfil - web xxx</title>
+
+    <link rel="stylesheet" href="navbar.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: #ffffff;
+            color: #111111;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            width: 100%;
+            padding: 18px 30px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .logo {
+            color: #111111;
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           CONTENEDOR PRINCIPAL
+        ========================= */
+
+.page-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 25px 10px 60px;
+}
+
+        .page-title {
+            margin: 0 0 25px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* =========================
+           PESTAÑAS
+        ========================= */
+
+        .tabs {
+            display: flex;
+            gap: 28px;
+            border-bottom: 1px solid #e5e5e5;
+            margin-bottom: 30px;
+        }
+
+        .tabs button {
+            background: none;
+            border: none;
+            color: #555555;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0 0 12px;
+        }
+
+        .tabs button:hover {
+            color: #3665f3;
+        }
+
+        .tabs button.active {
+            color: #111111;
+            border-bottom: 3px solid #3665f3;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+
+        /* =========================
+           ESTRUCTURA
+        ========================= */
+
+        .account-container {
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+       .sidebar {
+    width: 235px;
+    min-width: 235px;
+    padding-right: 20px;
+    border-right: 1px solid #e0e0e0;
+}
+
+        .sidebar h3 {
+            margin: 25px 0 8px;
+            color: #111111;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar h3:first-child {
+            margin-top: 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 5px;
+            color: #333333;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: 0.2s ease;
+        }
+
+        .sidebar a:hover {
+            background: #f2f6ff;
+            color: #3665f3;
+        }
+
+        .sidebar a.active {
+            background: #e9f0ff;
+            color: #3665f3;
+            font-weight: 600;
+        }
+
+        /* =========================
+           BADGES
+        ========================= */
+
+        .badge {
+            background: #3665f3;
+            color: #ffffff;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        /* =========================
+           CONTENIDO
+        ========================= */
+
+       .content {
+    flex: 1;
+    min-width: 0;
+    padding-left: 35px;
+}
+
+        .content h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .content h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* =========================
+           ANIMACIÓN
+        ========================= */
+
+        .seccion,
+        .activity-seccion,
+        .mensaje-seccion {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           PERFIL
+        ========================= */
+
+        .profile-card {
+            width: 100%;
+            max-width: 900px;
+            padding: 25px;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+        }
+
+        .profile-card h2 {
+            margin-bottom: 25px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            color: #333333;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #ffffff;
+            color: #111111;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #3665f3;
+        }
+
+        .input-group input[readonly] {
+            background: #f7f7f7;
+        }
+
+        .save-btn {
+            margin-top: 25px;
+            padding: 10px 18px;
+            background: #3665f3;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .save-btn:hover {
+            background: #254edb;
+        }
+
+        /* =========================
+           DIRECCIONES
+        ========================= */
+
+        .address-card {
+            max-width: 600px;
+            padding: 20px;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+        }
+
+        .address-card h3 {
+            margin-top: 0;
+        }
+
+        /* =========================
+           CERRAR CUENTA
+        ========================= */
+
+        .cerrar-cuenta-box {
+            max-width: 600px;
+            padding: 25px;
+            margin-top: 20px;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+        }
+
+        .cerrar-cuenta-box input {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+        }
+
+        .cerrar-cuenta-box button {
+            padding: 10px 18px;
+            background: #dc2626;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cerrar-cuenta-box button:hover {
+            background: #b91c1c;
+        }
+
+        /* =========================
+           CONFIGURACIÓN
+        ========================= */
+
+        .subtitulo-config {
+            margin-bottom: 25px;
+            color: #666666;
+        }
+
+        .config-card {
+            max-width: 800px;
+            min-height: 90px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+        }
+
+        .config-card h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+        }
+
+        .config-card p {
+            margin: 0;
+            color: #666666;
+            font-size: 14px;
+        }
+
+        .config-card select {
+            min-width: 130px;
+            padding: 8px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            background: #ffffff;
+        }
+
+        .btn-config {
+            padding: 8px 15px;
+            background: #ffffff;
+            color: #3665f3;
+            border: 1px solid #3665f3;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-config:hover {
+            background: #3665f3;
+            color: #ffffff;
+        }
+
+        .config-card.peligro {
+            border-color: #fecaca;
+        }
+
+        .btn-peligro {
+            padding: 8px 15px;
+            background: #dc2626;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* =========================
+           IFRAME
+        ========================= */
+
+        .content iframe {
+            display: block;
+            width: 100%;
+            height: 0;
+            min-width: 0;
+            border: none;
+            overflow: hidden;
+        }
+
+        /* =========================
+           PERSONAL INFO ANTIGUO
+        ========================= */
+
+        #personalInfoSection {
+            width: 100%;
+        }
+
+        #personalInfoSection input {
+            width: 100%;
+            padding: 9px;
+            margin-bottom: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+        }
+
+        #personalInfoSection input:disabled {
+            background: #f7f7f7;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .page-container {
+                padding: 25px 20px 50px;
+            }
+
+            .account-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                padding-right: 0;
+                padding-bottom: 20px;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .content {
+                width: 100%;
+                padding-left: 0;
+                padding-top: 30px;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <a href="index.html" class="logo">
+            web xxx
+        </a>
+    </header>
+
+
+    <main class="page-container">
+
+        <h1 class="page-title">
+            Mi Perfil
+        </h1>
+
+
+        <!-- =========================================
+             PESTAÑAS
+        ========================================== -->
+
+        <div class="tabs">
+
+            <button
+                class="active"
+                onclick="showTab('activity', this)">
+                Activity
+            </button>
+
+            <button
+                onclick="showTab('messages', this)">
+                Messages
+            </button>
+
+            <button
+                onclick="showTab('account', this)">
+                Account
+            </button>
+
+        </div>
+
+
+        <!-- =========================================
+             ACTIVITY
+        ========================================== -->
+
+        <div id="activity" class="tab-content">
+
+            <div class="account-container">
+
+                <div class="sidebar">
+
+                    <h3>Activity</h3>
+
+                    <a
+                        href="#"
+                        class="active"
+                        onclick="mostrarActivity('comprasAct', this); return false;">
+                        Compras
+                        <span class="badge">2</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarActivity('vistasAct', this); return false;">
+                        Artículos vistos
+                        <span class="badge">5</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarActivity('ofertasAct', this); return false;">
+                        Ofertas
+                        <span class="badge">1</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarActivity('mensajesAct', this); return false;">
+                        Mensajes
+                        <span class="badge">3</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarActivity('cuentaAct', this); return false;">
+                        Cambios en la cuenta
+                    </a>
+
+                </div>
+
+
+                <div class="content">
+
+                    <div id="comprasAct" class="activity-seccion">
+                        <h2>Compras recientes</h2>
+                        <p>No tienes compras recientes.</p>
+                    </div>
+
+                    <div
+                        id="vistasAct"
+                        class="activity-seccion"
+                        style="display:none;">
+                        <h2>Artículos vistos</h2>
+                        <p>No has visto artículos recientemente.</p>
+                    </div>
+
+                    <div
+                        id="ofertasAct"
+                        class="activity-seccion"
+                        style="display:none;">
+                        <h2>Ofertas realizadas</h2>
+                        <p>No has realizado ofertas.</p>
+                    </div>
+
+                    <div
+                        id="mensajesAct"
+                        class="activity-seccion"
+                        style="display:none;">
+                        <h2>Actividad de mensajes</h2>
+                        <p>No hay actividad en mensajes.</p>
+                    </div>
+
+                    <div
+                        id="cuentaAct"
+                        class="activity-seccion"
+                        style="display:none;">
+                        <h2>Cambios en la cuenta</h2>
+                        <p>No has realizado cambios recientes.</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             MENSAJES
+        ========================================== -->
+
+        <div id="messages" class="tab-content">
+
+            <div class="account-container">
+
+                <div class="sidebar">
+
+                    <h3>Mensajes</h3>
+
+                    <a
+                        href="#"
+                        onclick="mostrarMensaje('inbox'); return false;">
+                        Bandeja de entrada
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarMensaje('miembros'); return false;">
+                        De miembros
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarMensaje('noLeidosMiembros'); return false;">
+                        No leídos de miembros
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarMensaje('noLeidos'); return false;">
+                        No leídos
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarMensaje('enviados'); return false;">
+                        Enviados
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarMensaje('eliminados'); return false;">
+                        Eliminados
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarMensaje('archivo'); return false;">
+                        Archivo
+                    </a>
+
+                </div>
+
+
+                <div class="content">
+
+                    <div id="inbox" class="mensaje-seccion">
+                        <h2>Bandeja de entrada</h2>
+                        <p>No tienes mensajes nuevos.</p>
+                    </div>
+
+                    <div
+                        id="miembros"
+                        class="mensaje-seccion"
+                        style="display:none;">
+                        <h2>Mensajes de miembros</h2>
+                    </div>
+
+                    <div
+                        id="noLeidosMiembros"
+                        class="mensaje-seccion"
+                        style="display:none;">
+                        <h2>No leídos de miembros</h2>
+                    </div>
+
+                    <div
+                        id="noLeidos"
+                        class="mensaje-seccion"
+                        style="display:none;">
+                        <h2>No leídos</h2>
+                    </div>
+
+                    <div
+                        id="enviados"
+                        class="mensaje-seccion"
+                        style="display:none;">
+                        <h2>Enviados</h2>
+                    </div>
+
+                    <div
+                        id="eliminados"
+                        class="mensaje-seccion"
+                        style="display:none;">
+                        <h2>Eliminados</h2>
+                    </div>
+
+                    <div
+                        id="archivo"
+                        class="mensaje-seccion"
+                        style="display:none;">
+                        <h2>Archivo</h2>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             ACCOUNT
+        ========================================== -->
+
+        <div id="account" class="tab-content">
+
+            <div class="account-container">
+
+
+                <!-- SIDEBAR -->
+
+                <div class="sidebar">
+
+                    <h3>Personal Info</h3>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('info'); return false;">
+                        Información personal
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('seguridad'); return false;">
+                        Inicio de sesión y seguridad
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('direcciones'); return false;">
+                        Direcciones
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('comentarios'); return false;">
+                        Comentarios
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('solicitaDatos'); return false;">
+                        Solicita tus datos
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('centroResolucion'); return false;">
+                        Centro de resolución
+                    </a>
+
+
+                    <h3>Payment Information</h3>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('pagos'); return false;">
+                        Pagos
+                    </a>
+
+
+                    <h3>Account Preferences</h3>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('preferencias'); return false;">
+                        Account Preferences
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('cerrar'); return false;">
+                        Close account
+                    </a>
+
+
+                    <h3>Ventas</h3>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('panel'); return false;">
+                        Panel de control del vendedor
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('cuentaVendedor'); return false;">
+                        Cuenta de vendedor
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('suscripciones'); return false;">
+                        Suscripciones
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('capital'); return false;">
+                        Capital del vendedor
+                    </a>
+
+
+                    <h3>Preferencias de donación</h3>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('donacionesPendientes'); return false;">
+                        Donaciones pendientes
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('donacionesFacturadas'); return false;">
+                        Donaciones facturadas
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('historial'); return false;">
+                        Historial
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('favoritos'); return false;">
+                        Favoritos
+                    </a>
+
+                    <a
+                        href="#"
+                        onclick="mostrarContenido('configuracion'); return false;">
+                        Configuración
+                    </a>
+
+                </div>
+
+
+                <!-- CONTENIDO -->
+
+                <div class="content">
+
+
+                    <!-- INFORMACIÓN PERSONAL -->
+
+                    <div id="info" class="seccion">
+
+                        <h1>
+                            Información personal
+                        </h1>
+
+                        <div id="perfilUsuario"></div>
+
+                    </div>
+
+
+                    <!-- SEGURIDAD -->
+
+                    <div
+                        id="seguridad"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Inicio de sesión y seguridad
+                        </h2>
+
+                        <iframe
+                            src="seguridad.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- DIRECCIONES -->
+
+                    <div
+                        id="direcciones"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Direcciones
+                        </h2>
+
+                        <iframe
+                            src="direcciones.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- COMENTARIOS -->
+
+                    <div
+                        id="comentarios"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Comentarios
+                        </h2>
+
+                        <iframe
+                            src="comentarios.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- SOLICITA DATOS -->
+
+                    <div
+                        id="solicitaDatos"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Solicita tus datos
+                        </h2>
+
+                        <iframe
+                            src="solicita-datos.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- CENTRO RESOLUCIÓN -->
+
+                    <div
+                        id="centroResolucion"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Centro de resolución
+                        </h2>
+
+                        <iframe
+                            src="resolucion.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- PAGOS -->
+
+                    <div
+                        id="pagos"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Pagos
+                        </h2>
+
+                        <iframe
+                            src="pagos.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- PREFERENCIAS -->
+
+                    <div
+                        id="preferencias"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Account Preferences
+                        </h2>
+
+                        <iframe
+                            src="preferencias.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- CERRAR CUENTA -->
+
+                    <div
+                        id="cerrar"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Close account
+                        </h2>
+
+                        <p>
+                            Al cerrar tu cuenta, perderás el acceso
+                            a tu cuenta y a la información asociada.
+                        </p>
+
+                        <div class="cerrar-cuenta-box">
+
+                            <h3>
+                                Close your account
+                            </h3>
+
+                            <p>
+                                Esta acción es permanente.
+                                Introduce tu contraseña para confirmar.
+                            </p>
+
+                            <input
+                                type="password"
+                                id="passwordCerrarCuenta"
+                                placeholder="Contraseña actual"
+                                autocomplete="current-password">
+
+                            <button
+                                type="button"
+                                onclick="cerrarCuenta()">
+                                Close account
+                            </button>
+
+                            <p id="mensajeCerrarCuenta"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PANEL VENDEDOR -->
+
+                    <div
+                        id="panel"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Panel de control del vendedor
+                        </h2>
+
+                        <iframe
+                            src="dashboard.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- CUENTA VENDEDOR -->
+
+                    <div
+                        id="cuentaVendedor"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Cuenta de vendedor
+                        </h2>
+
+                    </div>
+
+
+                    <!-- SUSCRIPCIONES -->
+
+                    <div
+                        id="suscripciones"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Suscripciones
+                        </h2>
+
+                    </div>
+
+
+                    <!-- CAPITAL -->
+
+                    <div
+                        id="capital"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Capital del vendedor
+                        </h2>
+
+                    </div>
+
+
+                    <!-- DONACIONES PENDIENTES -->
+
+                    <div
+                        id="donacionesPendientes"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Donaciones pendientes
+                        </h2>
+
+                    </div>
+
+
+                    <!-- DONACIONES FACTURADAS -->
+
+                    <div
+                        id="donacionesFacturadas"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Donaciones facturadas
+                        </h2>
+
+                    </div>
+
+
+                    <!-- HISTORIAL -->
+
+                    <div
+                        id="historial"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Historial
+                        </h2>
+
+                        <iframe
+                            src="Historial.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- FAVORITOS -->
+
+                    <div
+                        id="favoritos"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h2>
+                            Favoritos
+                        </h2>
+
+                        <iframe
+                            src="Favoritos.html"
+                            scrolling="no">
+                        </iframe>
+
+                    </div>
+
+
+                    <!-- CONFIGURACIÓN -->
+
+                    <div
+                        id="configuracion"
+                        class="seccion"
+                        style="display:none;">
+
+                        <h1>
+                            Configuración
+                        </h1>
+
+                        <p class="subtitulo-config">
+                            Administra las preferencias de tu cuenta.
+                        </p>
+
+
+                        <div class="config-card">
+
+                            <div>
+                                <h3>
+                                    Notificaciones
+                                </h3>
+
+                                <p>
+                                    Recibe avisos sobre tus compras,
+                                    ventas y actividad.
+                                </p>
+                            </div>
+
+                            <label class="switch">
+
+                                <input
+                                    type="checkbox"
+                                    id="notificaciones">
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="config-card">
+
+                            <div>
+                                <h3>
+                                    Notificaciones por correo
+                                </h3>
+
+                                <p>
+                                    Recibe información importante
+                                    de web xxx en tu correo.
+                                </p>
+                            </div>
+
+                            <label class="switch">
+
+                                <input
+                                    type="checkbox"
+                                    id="correoNotificaciones">
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="config-card">
+
+                            <div>
+                                <h3>
+                                    Apariencia
+                                </h3>
+
+                                <p>
+                                    Selecciona cómo quieres visualizar
+                                    web xxx.
+                                </p>
+                            </div>
+
+                            <select id="apariencia">
+
+                                <option value="claro">
+                                    Claro
+                                </option>
+
+                                <option value="oscuro">
+                                    Oscuro
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="config-card">
+
+                            <div>
+                                <h3>
+                                    Idioma
+                                </h3>
+
+                                <p>
+                                    Selecciona el idioma de la plataforma.
+                                </p>
+                            </div>
+
+                            <select id="idioma">
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="config-card">
+
+                            <div>
+                                <h3>
+                                    Privacidad
+                                </h3>
+
+                                <p>
+                                    Controla cómo se utiliza
+                                    la información de tu cuenta.
+                                </p>
+                            </div>
+
+                            <button
+                                class="btn-config"
+                                onclick="abrirPrivacidad()">
+                                Administrar
+                            </button>
+
+                        </div>
+
+
+                        <div class="config-card peligro">
+
+                            <div>
+                                <h3>
+                                    Cerrar cuenta
+                                </h3>
+
+                                <p>
+                                    Elimina permanentemente
+                                    tu cuenta de web xxx.
+                                </p>
+                            </div>
+
+                            <button
+                                class="btn-peligro"
+                                onclick="mostrarContenido('cerrar')">
+                                Cerrar cuenta
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             PERSONAL INFO ANTIGUO
+        ========================================== -->
+
+        <div
+            id="personalInfoSection"
+            style="display:none; margin-top:20px;">
+
+            <h3>
+                Personal Information
+            </h3>
+
+            <div style="max-width:400px;">
+
+                <input
+                    type="text"
+                    id="personalFullName"
+                    placeholder="Nombre completo">
+
+                <input
+                    type="text"
+                    id="personalAddress"
+                    placeholder="Dirección">
+
+                <input
+                    type="text"
+                    id="personalCity"
+                    placeholder="Ciudad">
+
+                <input
+                    type="text"
+                    id="personalCountry"
+                    placeholder="País">
+
+                <input
+                    type="tel"
+                    id="personalPhone"
+                    placeholder="Teléfono">
+
+                <button
+                    type="button"
+                    onclick="savePersonalInfo()"
+                    style="
+                        background:#16a34a;
+                        color:white;
+                        padding:8px 15px;
+                        border:none;
+                        border-radius:6px;
+                        cursor:pointer;
+                    ">
+                    Guardar
+                </button>
+
+                <p id="personalMessage"></p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script src="sesion.js"></script>
+<script src="navbar.js"></script>
+    <script src="profile.js"></script>
+    <script src="script.js"></script>
+    <script src="dashboard.js"></script>
+
+</body>
+</html>

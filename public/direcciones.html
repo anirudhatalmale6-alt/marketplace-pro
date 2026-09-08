@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Direcciones</title>
+
+  <link rel="stylesheet" href="direcciones.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+  <main class="direcciones-container">
+
+    <!-- ENCABEZADO -->
+    <section class="page-header">
+
+      <div class="header-icon">
+        📍
+      </div>
+
+      <div>
+        <h1>Direcciones</h1>
+        <p>
+          Administra tus direcciones para compras y entregas.
+        </p>
+      </div>
+
+    </section>
+
+
+    <!-- DIRECCIÓN PRINCIPAL -->
+    <section class="direccion-card">
+
+      <div class="card-header">
+
+        <div>
+          <h2>Dirección principal</h2>
+
+          <p>
+            Esta dirección se utilizará para recibir tus compras.
+          </p>
+        </div>
+
+        <span class="direccion-badge">
+          Principal
+        </span>
+
+      </div>
+
+
+      <!-- FORMULARIO -->
+      <form id="formDireccion">
+
+        <div class="form-grid">
+
+          <!-- TELÉFONO -->
+          <div class="campo">
+
+            <label for="telefono">
+              Teléfono
+            </label>
+
+            <input
+              type="tel"
+              id="telefono"
+              placeholder="809-555-5555"
+              autocomplete="tel"
+            >
+
+          </div>
+
+
+          <!-- PAÍS -->
+          <div class="campo">
+
+            <label for="country">
+              País
+            </label>
+
+            <select id="country">
+
+              <option value="">
+                Seleccionar país
+              </option>
+
+              <option value="República Dominicana">
+                República Dominicana
+              </option>
+
+              <option value="Estados Unidos">
+                Estados Unidos
+              </option>
+
+              <option value="Puerto Rico">
+                Puerto Rico
+              </option>
+
+              <option value="España">
+                España
+              </option>
+
+              <option value="Otro">
+                Otro
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- PROVINCIA -->
+          <div class="campo">
+
+            <label for="state">
+              Provincia
+            </label>
+
+            <input
+              type="text"
+              id="state"
+              placeholder="Ej. Santo Domingo"
+              autocomplete="address-level1"
+            >
+
+          </div>
+
+
+          <!-- CIUDAD -->
+          <div class="campo">
+
+            <label for="city">
+              Ciudad
+            </label>
+
+            <input
+              type="text"
+              id="city"
+              placeholder="Ej. Santo Domingo Este"
+              autocomplete="address-level2"
+            >
+
+          </div>
+
+
+          <!-- SECTOR -->
+          <div class="campo">
+
+            <label for="sector">
+              Sector
+            </label>
+
+            <input
+              type="text"
+              id="sector"
+              placeholder="Ej. Ensanche Ozama"
+            >
+
+          </div>
+
+
+          <!-- CÓDIGO POSTAL -->
+          <div class="campo">
+
+            <label for="zip">
+              Código postal
+            </label>
+
+            <input
+              type="text"
+              id="zip"
+              placeholder="Ej. 11501"
+              autocomplete="postal-code"
+            >
+
+          </div>
+
+
+          <!-- DIRECCIÓN -->
+          <div class="campo campo-completo">
+
+            <label for="address">
+              Dirección
+            </label>
+
+            <input
+              type="text"
+              id="address"
+              placeholder="Calle, número, edificio, apartamento..."
+              autocomplete="street-address"
+            >
+
+          </div>
+
+
+          <!-- REFERENCIA -->
+          <div class="campo campo-completo">
+
+            <label for="reference">
+              Referencia
+            </label>
+
+            <textarea
+              id="reference"
+              rows="3"
+              placeholder="Ej. Frente al supermercado, edificio azul, apartamento 2B..."
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+        <!-- MENSAJE -->
+        <div
+          id="mensajeDireccion"
+          class="mensaje"
+          style="display:none;"
+        ></div>
+
+
+        <!-- PIE -->
+        <div class="card-footer">
+
+          <div class="seguridad">
+
+            <span class="seguridad-icon">
+              🔒
+            </span>
+
+            <div>
+
+              <strong>
+                Información protegida
+              </strong>
+
+              <small>
+                Tus datos solo se utilizan para gestionar tus entregas.
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="submit"
+            id="btnGuardar"
+            class="btn-guardar"
+          >
+            Guardar dirección
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+    <!-- INFORMACIÓN -->
+    <section class="info-box">
+
+      <div class="info-icon">
+        ℹ️
+      </div>
+
+      <div>
+
+        <h3>
+          ¿Para qué utilizamos esta información?
+        </h3>
+
+        <p>
+          Tu dirección nos permite gestionar correctamente
+          tus compras y entregas en web xxx.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script src="sesion.js"></script>
+<script src="direcciones.js"></script>
+
+</body>
+
+</html>

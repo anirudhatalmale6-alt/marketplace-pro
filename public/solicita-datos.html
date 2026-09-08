@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <title>Solicita tus datos</title>
+
+  <link
+    rel="stylesheet"
+    href="solicita-datos.css">
+
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+  <main class="datos-container">
+
+    <div class="datos-header">
+
+      <div class="icono-datos">
+        📄
+      </div>
+
+      <div>
+        <h1>Solicita tus datos</h1>
+
+        <p>
+          Solicita una copia de la información
+          asociada a tu cuenta de web xxx.
+        </p>
+      </div>
+
+    </div>
+
+
+    <section class="datos-card">
+
+      <div class="card-icon">
+        🔐
+      </div>
+
+      <div class="card-content">
+
+        <h2>
+          Tus datos personales
+        </h2>
+
+        <p>
+          Puedes solicitar una copia de los datos
+          que tenemos asociados a tu cuenta,
+          incluyendo tu información personal,
+          direcciones y actividad de la cuenta.
+        </p>
+
+        <button
+          id="btnSolicitarDatos"
+          class="btn-solicitar">
+
+          Solicitar mis datos
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section
+      id="estadoSolicitud"
+      class="estado-solicitud"
+      style="display:none;">
+
+      <div class="estado-icon">
+        ✅
+      </div>
+
+      <div>
+
+        <h3>
+          Solicitud enviada
+        </h3>
+
+        <p id="mensajeSolicitud">
+          Tu solicitud ha sido registrada.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <section class="informacion">
+
+      <h2>
+        ¿Qué información puedes solicitar?
+      </h2>
+
+      <div class="info-grid">
+
+        <div class="info-item">
+
+          <span>👤</span>
+
+          <div>
+            <strong>
+              Información personal
+            </strong>
+
+            <p>
+              Nombre, correo electrónico y
+              datos de contacto.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <span>📍</span>
+
+          <div>
+            <strong>
+              Direcciones
+            </strong>
+
+            <p>
+              Direcciones de envío y
+              datos relacionados.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <span>🛒</span>
+
+          <div>
+            <strong>
+              Actividad de la cuenta
+            </strong>
+
+            <p>
+              Información relacionada con
+              tus compras y anuncios.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <span>⚙️</span>
+
+          <div>
+            <strong>
+              Configuración
+            </strong>
+
+            <p>
+              Preferencias y configuraciones
+              asociadas a tu cuenta.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <p class="nota">
+
+      La solicitud será procesada de acuerdo
+      con las políticas de privacidad de web xxx.
+
+    </p>
+
+  </main>
+
+
+  <script src="sesion.js"></script>
+<script src="solicita-datos.js"></script>
+
+</body>
+
+</html>

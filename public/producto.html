@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Producto - web xxx</title>
+<link rel="stylesheet" href="navbar.css">
+<link rel="stylesheet" href="chat.css">
+<link rel="stylesheet" href="producto.css">
+
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+
+<header class="topbar">
+
+<a href="index.html" class="logo">web xxx</a>
+
+<div class="search-container">
+
+<input type="text" id="buscarInput" placeholder="Buscar productos..." onkeyup="buscarProducto()">
+
+<select id="categoria">
+<option value="todo">Todo</option>
+<option value="telefonos">Teléfonos</option>
+<option value="consolas">Consolas</option>
+<option value="tv">Televisores</option>
+<option value="computadoras">Computadoras</option>
+</select>
+
+<button onclick="buscarProducto()">Buscar</button>
+
+<div id="resultadosBusqueda"></div>
+
+</div>
+
+<nav class="menu" id="menuUsuario">
+
+<div id="usuarioMenu" style="display:none; position:relative; margin-left:20px;">
+
+<button onclick="toggleMenu()" class="usuario-btn">
+👤 <span id="usuarioNombre"></span> ▼
+</button>
+
+<div id="menuDesplegable" class="dropdown-menu">
+
+<a href="profile.html">👤 Perfil</a>
+<a href="historial.html">🛒 Mis compras</a>
+<a href="favoritos.html">❤️ Mis favoritos</a>
+<a href="#" onclick="cerrarSesion()">🚪 Cerrar sesión</a>
+
+</div>
+
+</div>
+
+<div id="carritoPanel" class="carrito-panel">
+
+<div class="carrito-header">
+<h3>🛒 Tu carrito</h3>
+<button onclick="cerrarCarrito()">✖</button>
+</div>
+
+<div id="carritoProductos" class="carrito-productos">
+<p>Tu carrito está vacío</p>
+</div>
+
+</div>
+
+<a href="#" id="carritoLink" onclick="abrirCarritoSeguro(event)">
+🛒 Carrito (<span id="carritoCantidad">0</span>)
+</a>
+
+</nav>
+
+</header>
+
+<!-- PRODUCTO -->
+
+<div class="producto-container">
+
+<div class="producto-layout">
+
+<!-- MINIATURAS -->
+
+<div id="miniaturas" class="galeria-miniaturas"></div>
+
+<!-- IMAGEN PRINCIPAL -->
+
+<div class="imagen-zoom-container">
+    <img id="imagen" class="imagen-principal">
+</div>
+
+<!-- INFO -->
+
+<div class="producto-info">
+
+<h2 id="nombre"></h2>
+
+<div class="vendedor" id="vendedor"></div>
+
+<div class="badges">
+🚚 Envío gratis | 🛡️ Garantía 1 año | 🔥 Mejor precio
+</div>
+
+<div class="precio" id="precio"></div>
+
+<div class="condicion">
+Estado: Nuevo
+</div>
+
+
+
+<p id="descripcion"></p>
+
+<div class="botones">
+<div class="cantidad" id="cantidad"></div>
+
+<div class="cantidad-box">
+
+  <select id="cantidadSeleccionada">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+  </select>
+
+  <span id="stockDisponible"></span>
+
+</div>
+
+<button class="boton comprar" onclick="comprarAhora()">
+⚡ Comprar ahora
+</button>
+
+<button type="button"
+class="boton comprar"
+onclick="agregarCarritoProducto(this, event)">
+🛒 Agregar al carrito
+</button>
+
+<button class="boton favorito" onclick="agregarFavorito()">
+❤ Agregar a favoritos
+</button>
+
+<button class="boton chat" onclick="abrirChat()"> 
+💬 Chat con vendedor
+</button>
+
+<!-- CHAT -->
+<div id="chatBox" class="chat-box">
+
+<div class="chat-header">
+
+<div>
+💬 Chat sobre <span id="chatProductoNombre"></span>
+</div>
+
+<div class="chat-controles">
+<span onclick="minimizarChat()">➖</span>
+<span onclick="cerrarChat()">✖</span>
+</div>
+
+</div>
+
+<div id="chatMensajes" class="chat-mensajes"></div>
+
+<!-- BOTON FINALIZAR CHAT -->
+<div class="chat-finalizar">
+<button onclick="finalizarChat()">Finalizar chat</button>
+</div>
+
+<div class="chat-input">
+<input type="text" id="mensajeInput" placeholder="Escribe un mensaje">
+<button onclick="enviarMensaje()">➤</button>
+</div>
+
+</div>
+
+
+<!-- NOTIFICACION FLOTANTE -->
+<div id="notificacionFlotante" class="noti-flotante" onclick="abrirChat()">
+
+<div class="noti-avatar">💬</div>
+
+<div class="noti-texto">
+<strong>Vendedor</strong><br>
+<span id="textoNoti">Nuevo mensaje</span>
+</div>
+
+</div>
+
+
+<!-- 🔔 SONIDO -->
+<audio id="sonidoMensaje" preload="auto">
+<source src="https://notificationsounds.com/storage/sounds/file-sounds-1152-pristine.mp3" type="audio/mpeg">
+</audio>
+
+</div> <!-- .botones -->
+</div> <!-- .producto-info -->
+</div> <!-- .producto-layout -->
+</div> <!-- .producto-container -->
+
+<!-- NAVBAR DINÁMICO -->
+<div id="navbar"></div>
+
+<script src="sesion.js"></script>
+<script src="producto.js"></script>
+<script src="chat.js"></script>
+<script src="carrito.js"></script>
+<script src="script.js"></script>
+<script src="navbar.js"></script>
+
+
+<script>
+fetch("navbar.html")
+.then(res => res.text())
+.then(data => {
+    document.getElementById("navbar").innerHTML = data;
+});
+
+protegerPagina();
+</script>
+
+</body>
+</html>

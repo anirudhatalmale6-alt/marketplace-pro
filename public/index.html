@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>web xxx</title>
+
+
+<link rel="stylesheet" href="tema.css">
+<style>
+
+    
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    padding-top:80px;
+}
+
+/* BARRA SUPERIOR */
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    background:#ffffff;
+    border-bottom:1px solid #e5e5e5;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 40px;
+    z-index:1000;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    color:#3665f3;
+    text-decoration:none;
+}
+
+/* BUSQUEDA */
+.search-container{
+    display:flex;
+    align-items:center;
+    width:600px;
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.search-container input{
+    flex:1;
+    padding:13px;
+    border:1px solid #2f2f30;
+    border-right:none;
+    border-radius:30px 0 0 30px;
+    font-size:14px;
+    outline:none;
+}
+
+.search-container button{
+    padding:12px 25px;
+    border:none;
+    background:#3665f3;
+    color:white;
+    font-weight:bold;
+    border-radius:0 30px 30px 0;
+    cursor:pointer;
+}
+
+.search-container button:hover{
+    background:#274bdb;
+}
+
+/* RESULTADOS BUSQUEDA */
+#resultadosBusqueda{
+    position:absolute;
+    top:45px;
+    left:0;
+    width:100%;
+    background:white;
+    border:1px solid #ddd;
+    border-top:none;
+    max-height:250px;
+    overflow-y:auto;
+    display:none;
+}
+
+.resultado-item{
+    padding:10px;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+}
+
+.resultado-item:hover{
+    background:#f3f4f6;
+}
+
+/* MENU */
+.menu a{
+    margin-left:20px;
+    text-decoration:none;
+    color:#333;
+    font-size:14px;
+}
+
+.menu a:hover{
+    color:#3665f3;
+}
+
+/* PRODUCTOS */
+.products{
+    padding:40px;
+    background:#f5f5f5;
+}
+
+.products h2{
+    margin-bottom:20px;
+}
+
+/* GRID DE PRODUCTOS */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    gap:20px;
+}
+
+/* TARJETA */
+.card{
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    transition:transform 0.2s;
+}
+
+.card:hover{
+    transform:scale(1.03);
+}
+
+.card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+
+/* CONTENIDO TARJETA */
+.card-body{
+    padding:15px;
+}
+
+.price{
+    font-size:20px;
+    font-weight:bold;
+    color:#111111;
+    margin-bottom:5px;
+}
+
+.seller{
+    font-size:13px;
+    color:#555;
+    margin-top:5px;
+}
+
+/* ETIQUETAS */
+.label{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:5px;
+    font-size:12px;
+    margin-bottom:5px;
+    color:white;
+}
+
+.green{
+    background:#2ecc71;
+}
+
+.yellow{
+    background:#f1c40f;
+}
+
+.red{
+    background:#e74c3c;
+}
+
+/* FOOTER */
+footer{
+    text-align:center;
+    padding:20px;
+    background:#0f172a;
+    color:white;
+    margin-top:40px;
+}
+
+/* HERO */
+.hero{
+    text-align:center;
+    padding:60px 20px;
+    background:white;
+}
+
+.hero h1{
+    font-size:32px;
+    margin-bottom:10px;
+    color:#111;
+}
+
+.hero p{
+    font-size:16px;
+    color:#555;
+}
+
+.ver, .agregar-carrito{
+    margin-top:8px;
+    padding:10px 12px;
+    background:#3665f3;
+    border:none;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+    width:100%;
+    font-weight:bold;
+    transition:0.2s;
+}
+
+.ver:hover, .agregar-carrito:hover{
+    background:#274bdb;
+}
+
+#categoria{
+    padding:12px;
+    border:1px solid #2f2f30;
+    border-left:none;
+    border-right:none;
+    font-size:14px;
+    outline:none;
+    background:white;
+}
+
+#carritoLink{
+    font-weight:bold;
+    color:#3665f3;
+}
+
+#carritoCantidad{
+    background:#3665f3;
+    color:white;
+    border-radius:50%;
+    padding:3px 7px;
+    font-size:12px;
+    margin-left:4px;
+    transition:transform 0.2s;
+}
+
+.animar-carrito{
+    transform:scale(1.4);
+}
+
+/* HEADER FIXED */
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#fff;
+    padding:15px 30px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+    position:fixed;
+    top:0;
+    width:100%;
+    z-index:1000;
+}
+
+nav a{
+    margin-left:20px;
+    text-decoration:none;
+    color:#333;
+    font-weight:bold;
+}
+
+.carrito{
+    background:#ffcc00;
+    padding:8px 15px;
+    border-radius:20px;
+}
+
+/* BOTÓN USUARIO */
+.usuario-btn{
+    background:#3665f3;
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:25px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.usuario-btn:hover{
+    background:#274bdb;
+}
+
+/* MENÚ DESPLEGABLE CON ANIMACIÓN */
+.dropdown-menu{
+    position:absolute;
+    right:0;
+    top:45px;
+    background:white;
+    border-radius:10px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    min-width:180px;
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(-10px);
+    visibility:hidden;
+    transition:0.3s;
+}
+
+.dropdown-menu.show{
+    opacity:1;
+    transform:translateY(0);
+    visibility:visible;
+}
+
+.dropdown-menu a{
+    display:block;
+    padding:12px;
+    text-decoration:none;
+    color:#333;
+    transition:0.2s;
+}
+
+.dropdown-menu a:hover{
+    background:#f3f4f6;
+}
+
+.volando{
+    position:fixed;
+    width:80px;
+    height:80px;
+    z-index:2000;
+    pointer-events:none;
+    transition:all 0.7s ease;
+    border-radius:10px;
+}
+
+/* PANEL CARRITO */
+.carrito-panel{
+    position:fixed;
+    top:0;
+    right:-400px;
+    width:350px;
+    height:100%;
+    background:white;
+    box-shadow:-5px 0 15px rgba(0,0,0,0.2);
+    z-index:3000;
+    transition:0.3s;
+    display:flex;
+    flex-direction:column;
+}
+
+.carrito-panel.abierto{
+    right:0;
+}
+
+.carrito-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px;
+    border-bottom:1px solid #eee;
+    font-weight:bold;
+}
+
+.carrito-header button{
+    border:none;
+    background:none;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.carrito-productos{
+    padding:15px;
+    overflow-y:auto;
+    flex:1;
+}
+
+.item-carrito{
+    display:flex;
+    align-items:center;
+    margin-bottom:10px;
+    border-bottom:1px solid #eee;
+    padding-bottom:10px;
+}
+
+.item-carrito img{
+    width:50px;
+    height:50px;
+    object-fit:cover;
+    margin-right:10px;
+    border-radius:5px;
+}
+
+/* GRID PRODUCTOS PUBLICADOS */
+.producto{
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.producto img{
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.producto h3{
+    font-size: 16px;
+    margin: 10px 0 5px;
+}
+
+.producto .precio{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.producto button{
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    border: none;
+    background: #3b6df6;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.list-view{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.list-view .card{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    background:white;
+    cursor:pointer;
+}
+
+.list-view .card img{
+    width:120px;
+    height:90px;
+    object-fit:cover;
+}
+
+.list-view .info{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    max-width:600px;
+}
+
+.list-view h3{
+    font-size:18px;
+    margin:0;
+}
+
+.list-view .price{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.list-view .desc{
+    color:#555;
+    font-size:14px;
+}
+
+.productos-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.view-options button{
+    padding:6px 12px;
+    margin-left:8px;
+    border:1px solid #ccc;
+    background:white;
+    cursor:pointer;
+}
+
+.view-options{
+    display:flex;
+    gap:6px;
+}
+
+.view-btn{
+    width:38px;
+    height:34px;
+    border:1px solid #ccc;
+    background:white;
+    cursor:pointer;
+    font-size:18px;
+    border-radius:4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.view-btn:hover{
+    background:#f5f5f5;
+}
+
+.view-btn.active{
+    background:#e8f0fe;
+    border-color:#1a73e8;
+    color:#1a73e8;
+}
+
+.marketplace{
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
+}
+
+.filtros{
+width:220px;
+background:white;
+border:1px solid #ddd;
+padding:15px;
+border-radius:6px;
+}
+
+.filtros label{
+display:block;
+margin-top:12px;
+font-weight:bold;
+}
+
+.filtros select{
+width:100%;
+padding:6px;
+margin-top:4px;
+}
+
+.productos-container{
+    flex:1;
+}
+
+.ordenar{
+display:flex;
+justify-content:flex-end;
+margin-bottom:10px;
+}
+
+.pagination{
+display:flex;
+justify-content:center;
+margin-top:30px;
+gap:6px;
+}
+
+.pagination button{
+padding:6px 10px;
+border:1px solid #ccc;
+background:white;
+cursor:pointer;
+}
+
+.pagination button:hover{
+background:#f5f5f5;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.filtros select{
+    transition:0.2s;
+    cursor:pointer;
+}
+
+.filtros select:hover{
+    border-color:#3665f3;
+}
+
+.filtros select:focus{
+    border-color:#3665f3;
+    box-shadow:0 0 3px rgba(54,101,243,0.3);
+}
+
+.card{
+    transition: all 0.3s ease;
+}
+
+</style>
+  <link rel="stylesheet" href="chat.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+<!-- BARRA SUPERIOR -->
+<header class="topbar">
+    <a href="index.html" class="logo">web xxx</a>
+    <div class="search-container">
+        <input type="text" id="buscarInput" placeholder="Buscar productos..." onkeyup="buscarProducto()">
+        <select id="categoria">
+            <option value="todo">Todo</option>
+            <option value="telefonos">Teléfonos</option>
+            <option value="consolas">Consolas</option>
+            <option value="tv">Televisores</option>
+            <option value="computadoras">Computadoras</option>
+        </select>
+        <button type="button" onclick="buscarProducto()">Buscar</button>
+        <div id="resultadosBusqueda"></div>
+    </div>
+
+    <nav class="menu" id="menuUsuario">
+        <a href="login.html" id="loginLink">Iniciar Sesión</a>
+        <a href="register.html" id="registerLink">Crear Cuenta</a>
+
+<div id="usuarioMenu" style="display:none; position:relative; margin-left:20px;">            <button onclick="toggleMenu()" class="usuario-btn">
+                👤 <span id="usuarioNombre"></span> ▼
+            </button>
+            <div id="menuDesplegable" class="dropdown-menu">
+                <a href="profile.html">👤 Perfil</a>
+                <a href="historial.html">🛒 Mis compras</a>
+                <a href="favoritos.html">❤️ Mis favoritos</a>
+                <a href="#" onclick="cerrarSesion()">🚪 Cerrar sesión</a>
+                
+            </div>
+        </div>
+
+        <a href="#" id="carritoLink" onclick="abrirCarritoSeguro(event)">
+            🛒 Carrito (<span id="carritoCantidad">0</span>)
+        </a>
+    </nav>
+
+    <div id="carritoPanel" class="carrito-panel">
+        <div class="carrito-header">
+            <h3>🛒 Tu carrito</h3>
+            <button onclick="cerrarCarrito()">✖</button>
+        </div>
+        <div id="carritoProductos" class="carrito-productos">
+            <p>Tu carrito está vacío</p>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+  <div class="marketplace">
+
+    <!-- FILTROS IZQUIERDA -->
+    <aside class="filtros">
+      <h3>🔎 Filtros</h3>
+
+      <label>Categoria</label>
+<select id="filtroCategoria" onchange="filtrarTodo()">
+  <option value="todo">Todo</option>
+  <option value="telefonos">Teléfonos</option>
+  <option value="consolas">Consolas</option>
+  <option value="tv">Televisores</option>
+  <option value="computadoras">Computadoras</option>
+</select>
+
+<label>Precio</label>
+<select id="filtroPrecio" onchange="filtrarTodo()">
+  <option value="todos">Todos</option>
+  <option value="0-10000">Menos de RD$10,000</option>
+  <option value="10000-25000">RD$10,000 - RD$25,000</option>
+  <option value="25000-50000">RD$25,000 - RD$50,000</option>
+  <option value="50000-999999">Más de RD$50,000</option>
+</select>
+
+<label>Condición</label>
+<select id="filtroCondicion" onchange="filtrarTodo()">
+  <option value="todo">Todo</option>
+  <option value="nuevo">Nuevo</option>
+  <option value="usado">Usado</option>
+</select>
+
+      <label>Ubicación</label>
+      <select>
+        <option>República Dominicana</option>
+      </select>
+    </aside>
+
+    <!-- DERECHA (PRODUCTOS) -->
+    <div class="productos-container">
+
+      <!-- HEADER BIEN ALINEADO -->
+      <div class="productos-header">
+
+        <h2>Productos recientes</h2>
+
+        <div class="header-right">
+          <select id="ordenar" onchange="ordenarProductos()">
+<option value="best">Best Match</option>
+<option value="precioMenor">Precio menor</option>
+<option value="precioMayor">Precio mayor</option>
+<option value="vendidos">Más vendidos</option>
+</select>
+          <div class="view-options">
+<button id="btnGaleria" class="view-btn" onclick="vistaGaleria()">
+☷
+</button>
+
+<button id="btnLista" class="view-btn active" onclick="vistaLista()">
+☰
+</button>
+
+</div>
+
+</div>
+
+      </div>
+
+      <!-- PRODUCTOS -->
+<div id="productosContainer" class="grid"></div>
+
+<!-- PAGINACIÓN -->
+<div class="pagination">
+  <button>1</button>
+  <button>2</button>
+  <button>3</button>
+  <button>4</button>
+  <button>5</button>
+</div>
+
+</div>
+
+    </div>
+
+  </div>
+
+<!-- HERO -->
+<section class="hero">
+    <h1>Compra y vende con precios transparentes</h1>
+    <p>Marketplace con vendedores verificados y precios reales.</p>
+</section>
+
+<footer>
+© 2026 web xxx - Marketplace con Confianza
+</footer>
+<script src="sesion.js"></script>
+<script src="chat.js"></script>
+<script src="script.js"></script>
+<div id="chatBox" class="chat-box">
+
+<div class="chat-header">
+
+<div>
+💬 Chat sobre <span id="chatProductoNombre"></span>
+</div>
+
+<div class="chat-controles">
+<span onclick="minimizarChat()">➖</span>
+<span onclick="cerrarChat()">✖</span>
+</div>
+
+</div>
+
+<div id="chatMensajes" class="chat-mensajes"></div>
+<!-- BOTON FINALIZAR CHAT -->
+<div class="chat-finalizar">
+<button onclick="finalizarChat()">Finalizar chat</button>
+</div>
+
+
+<div class="chat-input">
+<input type="text" id="mensajeInput" placeholder="Escribe un mensaje...">
+<button onclick="enviarMensaje()">Enviar</button>
+
+</div>
+
+</div>
+
+<script src="tema.js"></script>
+</body>
+</html>

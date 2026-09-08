@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro | WEb xxx</title>
+  <link rel="stylesheet" href="register.css" />
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+  <div class="auth-container">
+    <h2>📝 Crear cuenta</h2>
+
+    <form id="registerForm">
+      <!-- Tipo -->
+      <select id="accountType" required>
+        <option value="">Selecciona tipo de cuenta</option>
+        <option value="personal">👤 Cuenta personal</option>
+        <option value="business">🏪 Cuenta de negocio</option>
+      </select>
+
+      <!-- DATOS PERSONALES -->
+      <div id="personalFields" style="display:none;">
+        <input type="text" id="nombre" placeholder="Nombre" />
+        <input type="text" id="apellido" placeholder="Apellido" />
+
+        <select id="country">
+          <option value="">Selecciona país</option>
+          <option value="DO">🇩🇴 República Dominicana</option>
+          <option value="US">🇺🇸 Estados Unidos</option>
+          <option value="ES">🇪🇸 España</option>
+          <option value="MX">🇲🇽 México</option>
+        </select>
+
+        <select id="state">
+          <option value="">Selecciona provincia / estado</option>
+        </select>
+
+        <input type="text" id="city" placeholder="Ciudad" />
+        <input type="text" id="sector" placeholder="Sector / barrio" />
+        <input type="text" id="direccion" placeholder="Calle, casa, apartamento" />
+        <input type="text" id="postalCode" placeholder="Código postal" />
+        <input type="text" id="reference" placeholder="Referencia de ubicación" />
+
+        <input type="tel" id="telefono" placeholder="Teléfono válido" />
+        <input type="email" id="email" placeholder="Correo válido" />
+        <input type="password" id="password" placeholder="Contraseña" />
+      </div>
+
+      <!-- NEGOCIO -->
+      <div id="businessFields" style="display:none;">
+        <input type="text" id="businessName" placeholder="Nombre del negocio" />
+
+        <select id="documentType">
+          <option value="">Tipo de documento</option>
+          <option value="cedula">Cédula</option>
+          <option value="rnc">RNC</option>
+        </select>
+
+        <input type="text" id="documentNumber" placeholder="Número de documento válido" />
+      </div>
+
+      <button type="submit">Crear cuenta</button>
+    </form>
+
+    <p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+  </div>
+
+  <script src="sesion.js"></script>
+<script src="register.js"></script>
+</body>
+</html>

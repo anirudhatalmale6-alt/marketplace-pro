@@ -1,0 +1,266 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f6f8;
+  color: #222;
+}
+
+.comentarios-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 35px 25px 50px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.comentarios-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.icono-comentarios {
+  width: 54px;
+  height: 54px;
+  background: #eef3ff;
+  border-radius: 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 25px;
+}
+
+.comentarios-header h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  color: #111;
+}
+
+.comentarios-header p {
+  margin: 0;
+  color: #666;
+  font-size: 15px;
+}
+
+
+/* =========================
+   TARJETA PRINCIPAL
+========================= */
+
+.comentarios-card {
+  background: #fff;
+  border: 1px solid #e1e3e6;
+  border-radius: 14px;
+  padding: 25px;
+
+  box-shadow:
+    0 3px 12px rgba(0,0,0,0.05);
+}
+
+.card-top {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+
+  background: #fff7df;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+}
+
+.card-top h2 {
+  margin: 0 0 7px;
+  font-size: 20px;
+}
+
+.card-top p {
+  margin: 0;
+  color: #666;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+
+/* =========================
+   LISTA
+========================= */
+
+.lista-comentarios {
+  margin-top: 25px;
+}
+
+
+/* =========================
+   SIN COMENTARIOS
+========================= */
+
+.comentario-vacio {
+  border: 1px dashed #d6d9de;
+  border-radius: 12px;
+
+  padding: 40px 20px;
+
+  text-align: center;
+  background: #fafafa;
+}
+
+.vacio-icon {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+.comentario-vacio h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  color: #222;
+}
+
+.comentario-vacio p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+}
+
+
+/* =========================
+   COMENTARIO INDIVIDUAL
+========================= */
+
+.comentario {
+  border: 1px solid #e1e3e6;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.comentario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.comentario-usuario {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.comentario-fecha {
+  color: #888;
+  font-size: 12px;
+}
+
+.comentario-estrellas {
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+.comentario-texto {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   INFORMACIÓN
+========================= */
+
+.informacion-comentarios {
+  margin-top: 25px;
+
+  background: #fff;
+  border: 1px solid #e1e3e6;
+  border-radius: 14px;
+
+  padding: 25px;
+}
+
+.informacion-comentarios h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.info-item {
+  display: flex;
+  gap: 13px;
+
+  padding: 16px;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+
+  background: #fafafa;
+}
+
+.info-item > span {
+  font-size: 21px;
+}
+
+.info-item strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.info-item p {
+  margin: 0;
+
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 650px) {
+
+  .comentarios-container {
+    padding: 25px 15px 40px;
+  }
+
+  .comentarios-header h1 {
+    font-size: 23px;
+  }
+
+  .comentarios-card,
+  .informacion-comentarios {
+    padding: 20px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta charset="UTF-8">
+<title>Confirmar compra</title>
+
+<link rel="stylesheet" href="checkout.css">
+
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+<div class="checkout-container">
+
+<h1>Confirmar compra</h1>
+
+<div class="checkout-grid">
+
+<!-- PRODUCTO -->
+<div class="producto-box">
+
+<h2>Tu producto</h2>
+
+<div id="productoCompra" class="producto-checkout"></div>
+
+</div>
+
+
+<!-- DIRECCIÓN Y PAGO -->
+<div class="pago-box">
+
+<h2>Dirección de envío</h2>
+
+<select id="pais" onchange="cambiarFormulario()">
+<option value="">Selecciona tu país</option>
+<option value="rd">República Dominicana</option>
+<option value="us">Estados Unidos</option>
+<option value="mx">México</option>
+<option value="es">España</option>
+</select>
+
+<div id="formularioDireccion"></div>
+
+
+<h2>Método de pago</h2>
+
+<select>
+<option>Tarjeta de crédito</option>
+<option>Tarjeta débito</option>
+<option>PayPal</option>
+<option>Transferencia</option>
+</select>
+
+<div class="total">
+
+<p>Total:</p>
+
+<h2 id="totalCompra"></h2>
+
+</div>
+
+<button class="boton-pagar" onclick="confirmarCompra()">
+Pagar ahora
+</button>
+
+</div>
+
+</div>
+
+</div>
+<script src="sesion.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&libraries=places"></script>
+<script src="checkout.js"></script>
+
+<script>
+  protegerPagina();
+</script>
+
+</body>
+</html>

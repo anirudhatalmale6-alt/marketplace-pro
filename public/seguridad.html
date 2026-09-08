@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Inicio de sesión y seguridad</title>
+
+<link rel="stylesheet" href="seguridad.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+<div class="account-layout">
+  <!-- SEGURIDAD -->
+
+  <div class="sidebar">
+
+    <h1>Inicio de sesión y seguridad</h1>
+
+
+    <div class="section">
+
+        <div class="section-text">
+
+            <h3>Claves de acceso</h3>
+
+            <p>
+                Inicie sesión en todos los dispositivos con su rostro,
+                huella digital o PIN usando una clave de acceso almacenada
+                en su administrador de contraseñas.
+            </p>
+
+        </div>
+
+        <button class="action-btn">
+            Editar - Claves de acceso
+        </button>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="section-text">
+
+            <h3>Contraseña</h3>
+
+            <p>
+                Crea una contraseña o modifica la que ya tienes.
+            </p>
+
+        </div>
+
+<button class="action-btn" data-action="password">
+    Editar - Contraseña
+</button>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="section-text">
+
+            <h3>Verificación en dos pasos</h3>
+
+            <p>
+                Proteja su cuenta agregando una capa adicional de seguridad.
+            </p>
+
+        </div>
+
+       <button class="action-btn" data-action="twofactor">
+    Editar - Verificación en dos pasos
+</button>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="section-text">
+
+            <h3>Dispositivos en los que confías</h3>
+
+            <p>
+                Revisa los dispositivos en los que has decidido confiar.
+            </p>
+
+        </div>
+
+<button class="action-btn" data-action="activity">
+    Vista - Actividad de inicio de sesión
+</button>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="section-text">
+
+            <h3>Actividad de inicio de sesión</h3>
+
+            <p>
+                Ver su historial de inicio de sesión.
+            </p>
+
+        </div>
+
+        <button class="action-btn">
+            Vista - Actividad de inicio de sesión
+        </button>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="section-text">
+
+            <h3>Inicio de sesión social</h3>
+
+            <p>
+                Vincula tu cuenta social para iniciar sesión y pagar más rápido.
+            </p>
+
+            <p class="status linked">
+                Google - Vinculado
+            </p>
+
+            <p class="status unlinked">
+                Facebook - Desvinculado
+            </p>
+
+            <p class="status unlinked">
+                Apple - Desvinculado
+            </p>
+
+        </div>
+
+        <button class="action-btn">
+            Editar - Redes sociales
+        </button>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="section-text">
+
+            <h3>Preferencias de inicio de sesión</h3>
+
+            <p>
+                Administre sus preferencias generales de inicio de sesión.
+            </p>
+
+        </div>
+
+        <button class="action-btn">
+            Vista - Preferencias de inicio de sesión
+        </button>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="section-text">
+
+            <h3>Acceso a aplicaciones de terceros</h3>
+
+            <p>
+                Ver o editar las aplicaciones de terceros con acceso a su cuenta.
+            </p>
+
+        </div>
+
+        <button class="action-btn">
+            Vista
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+<!-- ===== MODAL ===== -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-content">
+
+        <span class="close-btn" id="closeModal">&times;</span>
+
+        <h2 id="modalTitle"></h2>
+
+        <div id="modalBody"></div>
+
+    </div>
+
+</div>
+
+
+<script src="sesion.js"></script>
+<script src="seguridad.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Mis compras</title>
+
+  <link rel="stylesheet" href="navbar.css">
+  <link rel="stylesheet" href="chat.css">
+  <link rel="stylesheet" href="historial.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+
+<body>
+
+  <div class="compras-header">
+    <h2>🛍️ Mis compras</h2>
+
+  <div class="compras-opciones">
+    <select id="porPaginaSelect" onchange="cambiarCantidadPagina()">
+      <option value="10">Mostrar 10</option>
+      <option value="20">Mostrar 20</option>
+      <option value="50">Mostrar 50</option>
+      <option value="100">Mostrar 100</option>
+    </select>
+  </div>
+</div>
+
+<div id="listaCompras"></div>
+
+
+<!-- CHAT -->
+<div id="chatBox" class="chat-box">
+
+<div class="chat-header">
+
+<div>
+💬 Chat sobre <span id="chatProductoNombre"></span>
+</div>
+
+<div class="chat-controles">
+<span onclick="minimizarChat()">➖</span>
+<span onclick="cerrarChat()">✖</span>
+</div>
+
+</div>
+
+<div id="chatMensajes" class="chat-mensajes"></div>
+
+<div class="chat-input">
+<input type="text" id="mensajeInput" placeholder="Escribe un mensaje...">
+<button onclick="enviarMensaje()">Enviar</button>
+</div>
+
+</div>
+
+
+
+<script src="sesion.js"></script>
+<script src="chat.js"></script>
+<script src="historial.js"></script>
+<script src="producto.js"></script>
+
+<script>
+  protegerPagina();
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+body{
+
+font-family: Arial, Helvetica, sans-serif;
+background:#f2f2f2;
+margin:0;
+padding:40px;
+
+}
+
+.checkout-container{
+
+max-width:1000px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
+
+}
+
+.checkout-container h1{
+
+margin-bottom:30px;
+
+}
+
+.checkout-grid{
+
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+
+}
+
+.producto-box{
+
+background:#fafafa;
+padding:20px;
+border-radius:8px;
+
+}
+
+.producto-checkout{
+
+display:flex;
+gap:20px;
+align-items:center;
+
+}
+
+.producto-checkout img{
+
+width:140px;
+border-radius:6px;
+border:1px solid #eee;
+
+}
+
+.producto-checkout h2{
+
+margin:0;
+
+}
+
+.producto-checkout p{
+
+color:#3665f3;
+font-weight:bold;
+font-size:20px;
+
+}
+
+.pago-box input,
+.pago-box select{
+
+display:block;
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ddd;
+border-radius:6px;
+font-size:14px;
+
+}
+
+.total{
+
+margin-top:20px;
+padding:15px;
+background:#fafafa;
+border-radius:6px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+}
+
+.total h2{
+
+color:#111;
+
+}
+
+.boton-pagar{
+
+margin-top:20px;
+width:100%;
+padding:16px;
+font-size:18px;
+background:#3665f3;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+transition:0.2s;
+
+}
+
+.boton-pagar:hover{
+
+background:#274bdb;
+
+}
+
+/* responsive */
+
+@media(max-width:800px){
+
+.checkout-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+select{
+
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ddd;
+border-radius:6px;
+
+}

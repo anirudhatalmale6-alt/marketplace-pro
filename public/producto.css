@@ -1,0 +1,164 @@
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  color:#222;
+  padding-top:90px;
+}
+
+/* PRODUCTO */
+
+.producto-container{
+  max-width:1200px;
+  margin:30px auto;
+  padding:20px;
+}
+
+.producto-layout{
+  display:grid;
+  grid-template-columns:90px minmax(400px, 1fr) 380px;
+  gap:25px;
+  align-items:start;
+  background:#fff;
+  padding:25px;
+  border-radius:12px;
+}
+
+/* MINIATURAS */
+
+.galeria-miniaturas{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.miniatura{
+  width:75px;
+  height:75px;
+  object-fit:cover;
+  border:2px solid transparent;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.miniatura.activa{
+  border-color:#3665f3;
+}
+
+/* IMAGEN PRINCIPAL */
+
+.imagen-zoom-container{
+  width:100%;
+  height:520px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:#fff;
+}
+
+.imagen-principal{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  transition:transform .2s ease;
+}
+
+/* INFORMACIÓN */
+
+.producto-info{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.producto-info h2{
+  margin:0;
+  font-size:25px;
+}
+
+.vendedor a{
+  color:#3665f3;
+  text-decoration:none;
+}
+
+.precio{
+  font-size:30px;
+  font-weight:bold;
+}
+
+.badges{
+  font-size:14px;
+  line-height:1.6;
+}
+
+#descripcion{
+  line-height:1.5;
+  color:#555;
+}
+
+.cantidad-box{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+#cantidadSeleccionada{
+  padding:8px;
+}
+
+/* BOTONES */
+
+.botones{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.boton{
+  width:100%;
+  padding:13px 16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.comprar{
+  background:#3665f3;
+  color:#fff;
+}
+
+.favorito{
+  background:#3665f3;
+  color:#f7f7f7;
+  border:1px solid #ccc;
+}
+
+.chat{
+  background:#3665f3;
+  color:white;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+  .producto-layout{
+    grid-template-columns:1fr;
+  }
+
+  .galeria-miniaturas{
+    flex-direction:row;
+    overflow-x:auto;
+  }
+
+  .imagen-zoom-container{
+    height:400px;
+  }
+}

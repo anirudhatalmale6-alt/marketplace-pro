@@ -1,0 +1,795 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background: #f5f7fa;
+
+  color: #1f2937;
+}
+
+
+/* =========================
+   CONTENEDOR
+========================= */
+
+.resolucion-container {
+  width: 100%;
+  max-width: 1100px;
+
+  margin: 0 auto;
+
+  padding: 35px 30px 60px;
+}
+
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.encabezado {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 14px;
+
+  padding: 30px;
+
+  margin-bottom: 25px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.encabezado h1 {
+  margin: 0 0 8px;
+
+  font-size: 28px;
+
+  color: #111827;
+}
+
+.encabezado p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 15px;
+
+  line-height: 1.5;
+}
+
+.icono-encabezado {
+  width: 65px;
+  height: 65px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #eef4ff;
+
+  border-radius: 50%;
+
+  font-size: 30px;
+}
+
+
+/* =========================
+   ACCIONES
+========================= */
+
+.acciones {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-bottom: 25px;
+}
+
+
+.accion-card {
+  display: flex;
+
+  gap: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 14px;
+
+  padding: 23px;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.accion-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
+
+.accion-icono {
+  min-width: 52px;
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #f0f4ff;
+
+  border-radius: 12px;
+
+  font-size: 25px;
+}
+
+
+.accion-contenido {
+  flex: 1;
+}
+
+.accion-contenido h2 {
+  margin: 0 0 8px;
+
+  font-size: 18px;
+
+  color: #111827;
+}
+
+.accion-contenido p {
+  margin: 0 0 17px;
+
+  color: #6b7280;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================
+   BOTONES
+========================= */
+
+.btn-principal,
+.btn-secundario,
+.btn-soporte,
+.btn-enviar,
+.btn-cancelar {
+
+  border: none;
+
+  border-radius: 7px;
+
+  padding: 10px 17px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.btn-principal {
+  background: #3665f3;
+
+  color: #ffffff;
+}
+
+.btn-principal:hover {
+  background: #274bdb;
+}
+
+
+.btn-secundario {
+  background: #ffffff;
+
+  color: #3665f3;
+
+  border: 1px solid #3665f3;
+}
+
+.btn-secundario:hover {
+  background: #eef3ff;
+}
+
+
+/* =========================
+   CASOS
+========================= */
+
+.casos {
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 14px;
+
+  padding: 25px;
+
+  margin-bottom: 25px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+
+.seccion-titulo {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #eeeeee;
+
+  padding-bottom: 18px;
+
+  margin-bottom: 20px;
+}
+
+.seccion-titulo h2 {
+  margin: 0 0 5px;
+
+  font-size: 21px;
+
+  color: #111827;
+}
+
+.seccion-titulo p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+
+.contador {
+  min-width: 35px;
+  height: 35px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #eef3ff;
+
+  color: #3665f3;
+
+  border-radius: 50%;
+
+  font-weight: bold;
+}
+
+
+/* =========================
+   SIN CASOS
+========================= */
+
+.sin-casos {
+  text-align: center;
+
+  padding: 35px 20px;
+}
+
+.sin-casos-icono {
+  font-size: 38px;
+
+  margin-bottom: 10px;
+}
+
+.sin-casos h3 {
+  margin: 0 0 8px;
+
+  color: #374151;
+
+  font-size: 17px;
+}
+
+.sin-casos p {
+  margin: 0;
+
+  color: #9ca3af;
+
+  font-size: 14px;
+}
+
+
+/* =========================
+   TARJETAS DE CASOS
+========================= */
+
+.lista-casos {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+
+.caso-card {
+  border: 1px solid #e5e7eb;
+
+  border-radius: 10px;
+
+  padding: 18px;
+
+  background: #fafafa;
+}
+
+
+.caso-superior {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+
+.caso-card h3 {
+  margin: 0 0 6px;
+
+  font-size: 16px;
+
+  color: #111827;
+}
+
+
+.caso-card p {
+  margin: 4px 0;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+
+.estado {
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+
+  font-weight: bold;
+
+  white-space: nowrap;
+}
+
+
+.estado-abierto {
+  background: #fff4d6;
+
+  color: #9a6700;
+}
+
+
+.estado-resuelto {
+  background: #dcfce7;
+
+  color: #166534;
+}
+
+
+/* =========================
+   AYUDA
+========================= */
+
+.ayuda {
+  display: flex;
+
+  align-items: center;
+
+  gap: 20px;
+
+  background: #f0f5ff;
+
+  border: 1px solid #dbe6ff;
+
+  border-radius: 14px;
+
+  padding: 25px;
+}
+
+
+.ayuda-icono {
+  width: 55px;
+  height: 55px;
+
+  min-width: 55px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+
+  border-radius: 50%;
+
+  font-size: 25px;
+}
+
+
+.ayuda-contenido {
+  flex: 1;
+}
+
+.ayuda-contenido h2 {
+  margin: 0 0 7px;
+
+  font-size: 18px;
+}
+
+.ayuda-contenido p {
+  margin: 0 0 15px;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+.btn-soporte {
+  background: #3665f3;
+
+  color: #ffffff;
+}
+
+.btn-soporte:hover {
+  background: #274bdb;
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+  position: fixed;
+
+  inset: 0;
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  z-index: 9999;
+}
+
+
+.modal.mostrar {
+  display: flex;
+}
+
+
+.modal-contenido {
+  position: relative;
+
+  width: 100%;
+
+  max-width: 550px;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.2);
+
+  animation: aparecer 0.2s ease;
+}
+
+
+@keyframes aparecer {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(10px)
+      scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+.cerrar-modal {
+  position: absolute;
+
+  top: 15px;
+  right: 15px;
+
+  width: 32px;
+  height: 32px;
+
+  border: none;
+
+  background: #f3f4f6;
+
+  border-radius: 50%;
+
+  font-size: 22px;
+
+  color: #555;
+
+  cursor: pointer;
+}
+
+
+.cerrar-modal:hover {
+  background: #e5e7eb;
+}
+
+
+.modal-icono {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #fff4d6;
+
+  border-radius: 50%;
+
+  font-size: 24px;
+
+  margin-bottom: 15px;
+}
+
+
+.modal-contenido h2 {
+  margin: 0 0 8px;
+
+  font-size: 22px;
+
+  color: #111827;
+}
+
+
+.modal-contenido > p {
+  margin: 0 0 22px;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+
+.modal-contenido form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin: 0;
+
+  max-width: none;
+}
+
+
+.modal-contenido label {
+  margin-top: 10px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #374151;
+}
+
+
+.modal-contenido input,
+.modal-contenido textarea {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 7px;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 14px;
+
+  outline: none;
+}
+
+
+.modal-contenido input:focus,
+.modal-contenido textarea:focus {
+  border-color: #3665f3;
+
+  box-shadow:
+    0 0 0 3px rgba(54, 101, 243, 0.1);
+}
+
+
+.modal-contenido textarea {
+  min-height: 120px;
+
+  resize: vertical;
+}
+
+
+.modal-botones {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+
+.btn-cancelar {
+  background: #f3f4f6;
+
+  color: #374151;
+}
+
+.btn-cancelar:hover {
+  background: #e5e7eb;
+}
+
+
+.btn-enviar {
+  background: #3665f3;
+
+  color: white;
+}
+
+.btn-enviar:hover {
+  background: #274bdb;
+}
+
+
+/* =========================
+   MENSAJE
+========================= */
+
+.mensaje {
+  position: fixed;
+
+  right: 25px;
+  bottom: 25px;
+
+  display: none;
+
+  background: #111827;
+
+  color: #ffffff;
+
+  padding: 14px 20px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  box-shadow:
+    0 5px 20px rgba(0, 0, 0, 0.2);
+
+  z-index: 10000;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 750px) {
+
+  .resolucion-container {
+    padding: 20px 15px 40px;
+  }
+
+  .acciones {
+    grid-template-columns: 1fr;
+  }
+
+  .encabezado {
+    padding: 22px;
+  }
+
+  .encabezado h1 {
+    font-size: 23px;
+  }
+
+  .icono-encabezado {
+    width: 50px;
+    height: 50px;
+
+    font-size: 24px;
+  }
+
+  .accion-card {
+    padding: 18px;
+  }
+
+  .ayuda {
+    align-items: flex-start;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .modal-contenido {
+    padding: 23px;
+  }
+
+  .casos {
+    padding: 18px;
+  }
+
+  .caso-superior {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .ayuda {
+    flex-direction: column;
+  }
+
+}

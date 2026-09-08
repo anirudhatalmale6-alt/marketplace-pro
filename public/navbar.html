@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Producto - web xxx</title>
+
+<link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+
+<header class="topbar">
+
+<a href="index.html" class="logo">web xxx</a>
+<div class="search-container">
+
+<input type="text" id="buscarInput" placeholder="Buscar productos..." onkeyup="buscarProducto()">
+
+<select id="categoria">
+<option value="todo">Todo</option>
+<option value="telefonos">Teléfonos</option>
+<option value="consolas">Consolas</option>
+<option value="tv">Televisores</option>
+<option value="computadoras">Computadoras</option>
+</select>
+
+<button onclick="buscarProducto()">Buscar</button>
+
+<div id="resultadosBusqueda"></div>
+
+</div>
+
+<nav class="menu" id="menuUsuario">
+  
+<div id="usuarioMenu" style="display:none; position:relative; display:inline-block; margin-left:20px;">
+
+<button onclick="toggleMenu()" class="usuario-btn">
+👤 <span id="usuarioNombre"></span> ▼
+</button>
+
+<div id="menuDesplegable" class="dropdown-menu">
+
+<a href="profile.html">👤 Perfil</a>
+<a href="historial.html">🛒 Mis compras</a>
+<a href="#" onclick="cerrarSesion()">🚪 Cerrar sesión</a>
+
+</div>
+</div>
+
+<div id="carritoPanel" class="carrito-panel">
+
+<div class="carrito-header">
+<h3>🛒 Tu carrito</h3>
+<button onclick="cerrarCarrito()">✖</button>
+</div>
+
+<div id="carritoProductos" class="carrito-productos">
+<p>Tu carrito está vacío</p>
+</div>
+
+</div>
+
+<a href="#" id="carritoLink" onclick="abrirCarritoSeguro(event)" style="display: inline-block;">
+🛒 Carrito (<span id="carritoCantidad">0</span>)
+</a>
+
+</nav>
+
+</header>
+
+<script src="sesion.js"></script>
+<script src="navbar.js"></script>
+<script src="script.js"></script>
+<script src="carrito.js"></script>
+<script>
+protegerPagina();
+</script>
+
+</body>
+</html>

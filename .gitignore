@@ -1,0 +1,16 @@
+node_modules/
+
+# Configuracion con claves reales: nunca se sube
+.env
+
+# Datos y archivos subidos por los usuarios
+data/
+uploads/
+backups/
+
+# Restos de la migracion
+*.json.antiguo
+*.json.tmp
+
+npm-debug.log*
+.DS_Store

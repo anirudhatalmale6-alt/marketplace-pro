@@ -1,0 +1,367 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f6f8;
+  color: #111827;
+}
+
+.pagos-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 25px;
+}
+
+.encabezado {
+  margin-bottom: 30px;
+}
+
+.encabezado h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.encabezado p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+
+/* =========================
+   MÉTODO DE PAGO
+========================= */
+
+.metodo-pago {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 14px;
+
+  padding: 24px;
+
+  margin-bottom: 18px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  transition: 0.2s;
+}
+
+.metodo-pago:hover {
+  border-color: #d1d5db;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
+}
+
+
+/* =========================
+   ICONOS
+========================= */
+
+.icono-metodo {
+  width: 58px;
+  height: 58px;
+
+  min-width: 58px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  font-size: 25px;
+
+  font-weight: bold;
+}
+
+.icono-metodo.paypal {
+  background: #eef4ff;
+  color: #003087;
+  font-size: 30px;
+}
+
+.icono-metodo.tarjeta {
+  background: #f1f5f9;
+}
+
+.icono-metodo.transferencia {
+  background: #eefbf3;
+}
+
+
+/* =========================
+   CONTENIDO
+========================= */
+
+.metodo-contenido {
+  flex: 1;
+}
+
+.metodo-contenido h2 {
+  margin: 0 0 7px;
+
+  font-size: 19px;
+}
+
+.metodo-contenido p {
+  margin: 0 0 17px;
+
+  color: #6b7280;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================
+   BOTONES
+========================= */
+
+.btn-pago {
+  border: 1px solid #d1d5db;
+
+  background: #ffffff;
+
+  color: #111827;
+
+  padding: 11px 18px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.btn-pago:hover {
+  background: #f8fafc;
+
+  border-color: #9ca3af;
+}
+
+.paypal-btn {
+  background: #0070ba;
+
+  border-color: #0070ba;
+
+  color: white;
+}
+
+.paypal-btn:hover {
+  background: #005ea6;
+
+  border-color: #005ea6;
+}
+
+
+/* =========================
+   FORMULARIOS
+========================= */
+
+.form-pago {
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 14px;
+
+  padding: 28px;
+
+  margin: -5px 0 22px;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 8px;
+}
+
+.form-header h2 {
+  margin: 0;
+
+  font-size: 21px;
+}
+
+.form-pago > p {
+  color: #6b7280;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  margin-bottom: 25px;
+}
+
+.cerrar {
+  width: 34px;
+  height: 34px;
+
+  border: none;
+
+  background: #f3f4f6;
+
+  border-radius: 50%;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  color: #374151;
+}
+
+.cerrar:hover {
+  background: #e5e7eb;
+}
+
+
+/* =========================
+   LABELS
+========================= */
+
+.form-pago label {
+  display: block;
+
+  margin: 16px 0 7px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #374151;
+}
+
+
+/* =========================
+   INPUTS
+========================= */
+
+.form-pago input,
+.form-pago select {
+  width: 100%;
+
+  padding: 12px 13px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 8px;
+
+  background: white;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition: 0.2s;
+}
+
+.form-pago input:focus,
+.form-pago select:focus {
+  border-color: #3483fa;
+
+  box-shadow: 0 0 0 3px rgba(52, 131, 250, 0.12);
+}
+
+
+/* =========================
+   DOS COLUMNAS
+========================= */
+
+.fila {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 15px;
+}
+
+
+/* =========================
+   GUARDAR
+========================= */
+
+.btn-guardar {
+  width: 100%;
+
+  margin-top: 25px;
+
+  padding: 13px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #3483fa;
+
+  color: white;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.btn-guardar:hover {
+  background: #2468d8;
+}
+
+
+/* =========================
+   MÓVIL
+========================= */
+
+@media (max-width: 600px) {
+
+  .pagos-container {
+    padding: 25px 15px;
+  }
+
+  .encabezado h1 {
+    font-size: 25px;
+  }
+
+  .metodo-pago {
+    align-items: flex-start;
+
+    padding: 20px;
+  }
+
+  .icono-metodo {
+    width: 48px;
+    height: 48px;
+
+    min-width: 48px;
+  }
+
+  .fila {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+}
