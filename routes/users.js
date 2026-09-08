@@ -18,17 +18,30 @@ const {
 
 const router = express.Router();
 
-/* Ayuda: modifica el usuario de la sesion dentro de la cola */
+/* Ayuda: carga el usuario de la sesion, deja que lo modifiquen y
+   guarda SOLO ese usuario.
+
+   Antes se leia la coleccion entera de usuarios para cambiar un campo
+   de uno. Ahora es una consulta por indice y una escritura dirigida. */
 async function editarUsuario(email, cambiar) {
-  return store.update("users", users => {
-    const i = users.findIndex(u => normalizarEmail(u.email) === email);
+  const actual = await store.findOne("users", { email });
 
-    if (i === -1) return { error: "Usuario no encontrado" };
+  if (!actual) return { error: "Usuario no encontrado" };
 
-    const salida = cambiar(users[i], users);
+  /* Copia, para que "cambiar" no toque el objeto que devolvio la base
+     de datos y podamos guardar exactamente lo que quedo */
+  const user = JSON.parse(JSON.stringify(actual));
 
-    return salida === undefined ? { user: users[i] } : salida;
-  });
+  const salida = cambiar(user);
+
+  /* Si el que llama devuelve un error, no se guarda nada */
+  if (salida && salida.error) return salida;
+
+  const { _id, ...campos } = user;
+
+  await store.updateOne("users", { email }, campos);
+
+  return salida === undefined ? { user } : { ...salida, user };
 }
 
 function texto(valor, max = 200) {
@@ -58,10 +71,7 @@ router.get("/user/:username", async (req, res, next) => {
   try {
     const username = String(req.params.username || "").toLowerCase();
 
-    const user = await store.find(
-      "users",
-      u => String(u.username || "").toLowerCase() === username
-    );
+    const user = await store.findOne("users", { username });
 
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
@@ -488,32 +498,29 @@ router.put(
 
 router.post("/solicitar-datos", requireAuth, async (req, res, next) => {
   try {
-    const resultado = await store.update("solicitudes-datos", solicitudes => {
-      const pendiente = solicitudes.find(
-        s => normalizarEmail(s.email) === req.email && s.estado === "pendiente"
-      );
-
-      if (pendiente) {
-        return { error: "Ya tienes una solicitud de datos pendiente." };
-      }
-
-      const nueva = {
-        id: store.nuevoId(),
-        email: req.email,
-        nombre: req.user.nombre || "",
-        apellido: req.user.apellido || "",
-        fecha: new Date().toISOString(),
-        estado: "pendiente"
-      };
-
-      solicitudes.push(nueva);
-
-      return { solicitud: nueva };
+    const pendiente = await store.findOne("solicitudes-datos", {
+      email: req.email,
+      estado: "pendiente"
     });
 
-    if (resultado.error) {
-      return res.status(400).json({ message: resultado.error });
+    if (pendiente) {
+      return res.status(400).json({
+        message: "Ya tienes una solicitud de datos pendiente."
+      });
     }
+
+    const nueva = {
+      id: store.nuevoId(),
+      email: req.email,
+      nombre: req.user.nombre || "",
+      apellido: req.user.apellido || "",
+      fecha: new Date().toISOString(),
+      estado: "pendiente"
+    };
+
+    await store.insertOne("solicitudes-datos", nueva);
+
+    const resultado = { solicitud: nueva };
 
     res.status(201).json({
       success: true,

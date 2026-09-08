@@ -319,7 +319,7 @@ router.get("/ads/:id", async (req, res, next) => {
   try {
     const id = Number(req.params.id);
 
-    const ad = await store.find("ads", a => Number(a.id) === id);
+    const ad = await store.findOne("ads", { id });
 
     if (!ad || ad.activo === false) {
       return res.status(404).json({ message: "Anuncio no encontrado" });
@@ -337,12 +337,11 @@ router.get("/ads/:id", async (req, res, next) => {
 
 router.get("/my-ads", requireAuth, async (req, res, next) => {
   try {
-    const ads = await store.filter(
+    const ads = await store.findMany(
       "ads",
-      a => normalizarEmail(a.sellerEmail) === req.email
+      { sellerEmail: req.email },
+      { orden: { createdAt: -1 } }
     );
-
-    ads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     res.json(ads.map(vistaAnuncio));
   } catch (error) {
@@ -434,23 +433,19 @@ router.delete("/ads/:id", requireAuth, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
 
-    const resultado = await store.update("ads", ads => {
-      const i = ads.findIndex(a => Number(a.id) === id);
+    const ad = await store.findOne("ads", { id });
 
-      if (i === -1) return { error: "Anuncio no encontrado", codigo: 404 };
-
-      if (normalizarEmail(ads[i].sellerEmail) !== req.email) {
-        return { error: "Este anuncio no es tuyo", codigo: 403 };
-      }
-
-      const [borrado] = ads.splice(i, 1);
-
-      return { ad: borrado };
-    });
-
-    if (resultado.error) {
-      return res.status(resultado.codigo).json({ message: resultado.error });
+    if (!ad) {
+      return res.status(404).json({ message: "Anuncio no encontrado" });
     }
+
+    if (normalizarEmail(ad.sellerEmail) !== req.email) {
+      return res.status(403).json({ message: "Este anuncio no es tuyo" });
+    }
+
+    await store.deleteMany("ads", { id });
+
+    const resultado = { ad };
 
     /* Se borran tambien las fotos del disco */
     await Promise.all(
@@ -464,11 +459,7 @@ router.delete("/ads/:id", requireAuth, async (req, res, next) => {
     );
 
     /* Y deja de estar en los favoritos de nadie */
-    await store.update("favoritos", favs => {
-      for (let i = favs.length - 1; i >= 0; i -= 1) {
-        if (Number(favs[i].adId) === id) favs.splice(i, 1);
-      }
-    });
+    await store.deleteMany("favoritos", { adId: id });
 
     res.json({ success: true, message: "Anuncio eliminado correctamente" });
   } catch (error) {
@@ -487,17 +478,19 @@ router.get("/seller/:email", optionalAuth, async (req, res, next) => {
   try {
     const email = normalizarEmail(req.params.email);
 
-    const user = await store.find(
-      "users",
-      u => normalizarEmail(u.email) === email
-    );
+    const user = await store.findOne("users", { email });
 
     if (!user) {
       return res.status(404).json({ message: "Vendedor no encontrado" });
     }
 
-    const productos = (await store.read("ads"))
-      .filter(a => normalizarEmail(a.sellerEmail) === email)
+    const productos = (
+      await store.findMany(
+        "ads",
+        { sellerEmail: email },
+        { orden: { createdAt: -1 } }
+      )
+    )
       .filter(a => a.activo !== false)
       .map(vistaAnuncio);
 

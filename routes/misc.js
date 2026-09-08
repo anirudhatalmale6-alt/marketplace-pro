@@ -15,15 +15,17 @@ const router = express.Router();
 
 router.get("/favoritos", requireAuth, async (req, res, next) => {
   try {
-    const favoritos = await store.filter(
-      "favoritos",
-      f => normalizarEmail(f.email) === req.email
-    );
+    const favoritos = await store.findMany("favoritos", { email: req.email });
 
-    const ads = await store.read("ads");
+    /* Se piden solo los anuncios marcados, no el catalogo entero */
+    const ads = await store.findMany("ads", {
+      id: { $in: favoritos.map(f => Number(f.adId)) }
+    });
+
+    const porId = new Map(ads.map(a => [Number(a.id), a]));
 
     const productos = favoritos
-      .map(f => ads.find(a => Number(a.id) === Number(f.adId)))
+      .map(f => porId.get(Number(f.adId)))
       .filter(Boolean)
       .filter(a => a.activo !== false)
       .map(a => ({ ...a, price: Number(a.price) || 0 }));
@@ -42,31 +44,28 @@ router.post("/favoritos", requireAuth, async (req, res, next) => {
       return res.status(400).json({ message: "Anuncio invalido" });
     }
 
-    const ad = await store.find("ads", a => Number(a.id) === adId);
+    const ad = await store.findOne("ads", { id: adId });
 
     if (!ad) {
       return res.status(404).json({ message: "El anuncio no existe" });
     }
 
-    const resultado = await store.update("favoritos", favoritos => {
-      const existe = favoritos.some(
-        f => normalizarEmail(f.email) === req.email && Number(f.adId) === adId
-      );
-
-      if (existe) return { error: "El producto ya esta en favoritos" };
-
-      favoritos.push({
+    try {
+      /* El indice unico (email + adId) es quien impide de verdad el
+         duplicado, aunque lleguen dos peticiones a la vez */
+      await store.insertOne("favoritos", {
         id: store.nuevoId(),
         email: req.email,
         adId,
         createdAt: new Date().toISOString()
       });
-
-      return { ok: true };
-    });
-
-    if (resultado.error) {
-      return res.status(409).json({ message: resultado.error });
+    } catch (error) {
+      if (error && error.code === 11000) {
+        return res.status(409).json({
+          message: "El producto ya esta en favoritos"
+        });
+      }
+      throw error;
     }
 
     res.status(201).json({
@@ -92,25 +91,13 @@ router.delete("/favoritos", requireAuth, async (req, res, next) => {
       return res.status(400).json({ message: "Anuncio invalido" });
     }
 
-    const resultado = await store.update("favoritos", favoritos => {
-      const antes = favoritos.length;
-
-      for (let i = favoritos.length - 1; i >= 0; i -= 1) {
-        if (
-          normalizarEmail(favoritos[i].email) === req.email &&
-          Number(favoritos[i].adId) === adId
-        ) {
-          favoritos.splice(i, 1);
-        }
-      }
-
-      if (favoritos.length === antes) return { error: "Favorito no encontrado" };
-
-      return { ok: true };
+    const borrados = await store.deleteMany("favoritos", {
+      email: req.email,
+      adId
     });
 
-    if (resultado.error) {
-      return res.status(404).json({ message: resultado.error });
+    if (borrados === 0) {
+      return res.status(404).json({ message: "Favorito no encontrado" });
     }
 
     res.json({
@@ -130,13 +117,12 @@ router.get("/favoritos/check", requireAuth, async (req, res, next) => {
       return res.status(400).json({ message: "Anuncio invalido" });
     }
 
-    const favoritos = await store.read("favoritos");
-
-    res.json({
-      favorito: favoritos.some(
-        f => normalizarEmail(f.email) === req.email && Number(f.adId) === adId
-      )
+    const favorito = await store.findOne("favoritos", {
+      email: req.email,
+      adId
     });
+
+    res.json({ favorito: Boolean(favorito) });
   } catch (error) {
     next(error);
   }
@@ -177,12 +163,9 @@ router.post("/resolution-cases", requireAuth, async (req, res, next) => {
     let pedido = "";
 
     if (body.pedido) {
-      const orden = await store.find(
-        "orders",
-        o =>
-          String(o.numero) === String(body.pedido) ||
-          Number(o.id) === Number(body.pedido)
-      );
+      const orden =
+        (await store.findOne("orders", { numero: String(body.pedido) })) ||
+        (await store.findOne("orders", { id: Number(body.pedido) }));
 
       if (!orden) {
         return res.status(404).json({ message: "Ese pedido no existe" });
@@ -226,12 +209,11 @@ router.post("/resolution-cases", requireAuth, async (req, res, next) => {
 
 router.get("/resolution-cases", requireAuth, async (req, res, next) => {
   try {
-    const casos = await store.filter(
+    const casos = await store.findMany(
       "resolution-cases",
-      c => normalizarEmail(c.email) === req.email
+      { email: req.email },
+      { orden: { fecha: -1 } }
     );
-
-    casos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     res.json(casos);
   } catch (error) {
@@ -243,10 +225,10 @@ router.get("/resolution-cases/:id", requireAuth, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
 
-    const caso = await store.find(
-      "resolution-cases",
-      c => Number(c.id) === id && normalizarEmail(c.email) === req.email
-    );
+    const caso = await store.findOne("resolution-cases", {
+      id,
+      email: req.email
+    });
 
     if (!caso) {
       return res.status(404).json({ message: "Caso no encontrado" });
@@ -271,15 +253,16 @@ router.get("/comentarios", async (req, res, next) => {
     /* Las resenas de un vendedor son publicas */
     const vendedor = normalizarEmail(req.query.vendedor);
 
-    const comentarios = await store.read("comentarios");
+    /* Consulta con indice: o las resenas RECIBIDAS por un vendedor, o
+       las ESCRITAS por un usuario. Antes se leian todas las del sitio. */
+    const filtro = vendedor
+      ? { vendedor }
+      : { email: normalizarEmail(req.query.email) };
 
-    const lista = vendedor
-      ? comentarios.filter(c => normalizarEmail(c.vendedor) === vendedor)
-      : comentarios.filter(
-          c => normalizarEmail(c.email) === normalizarEmail(req.query.email)
-        );
-
-    lista.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const lista = await store.findMany("comentarios", filtro, {
+      orden: { createdAt: -1 },
+      limite: 200
+    });
 
     res.json(
       lista.map(c => ({
@@ -323,10 +306,7 @@ router.post("/comentarios", requireAuth, async (req, res, next) => {
         });
       }
 
-      const existe = await store.find(
-        "users",
-        u => normalizarEmail(u.email) === destino
-      );
+      const existe = await store.findOne("users", { email: destino });
 
       if (!existe) {
         return res.status(404).json({ message: "Ese vendedor no existe" });
@@ -353,22 +333,22 @@ router.post("/comentarios", requireAuth, async (req, res, next) => {
 
     /* Recalcular la valoracion media del vendedor */
     if (vendedor) {
-      const todos = await store.filter(
-        "comentarios",
-        c => normalizarEmail(c.vendedor) === vendedor && c.calificacion > 0
-      );
+      const todos = (
+        await store.findMany("comentarios", { vendedor })
+      ).filter(c => Number(c.calificacion) > 0);
 
       const media =
         todos.reduce((s, c) => s + Number(c.calificacion || 0), 0) /
         (todos.length || 1);
 
-      await store.update("users", users => {
-        const i = users.findIndex(u => normalizarEmail(u.email) === vendedor);
-        if (i === -1) return store.SIN_CAMBIOS;
-
-        users[i].rating = Math.round(media * 10) / 10;
-        users[i].totalReviews = todos.length;
-      });
+      await store.updateOne(
+        "users",
+        { email: vendedor },
+        {
+          rating: Math.round(media * 10) / 10,
+          totalReviews: todos.length
+        }
+      );
     }
 
     res.status(201).json({

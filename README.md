@@ -3,8 +3,8 @@
 Sitio tipo marketplace: cuentas de usuario, publicacion de productos,
 busqueda con filtros, carrito, pedidos y valoraciones.
 
-Node.js + Express 5. Los datos se guardan por ahora en archivos JSON
-dentro de `data/`.
+Node.js + Express 5. Los datos van en **MongoDB**, o en archivos JSON si
+no configuras MongoDB (ver la seccion "MongoDB" mas abajo).
 
 ---
 
@@ -45,7 +45,8 @@ sesiones se podrian falsificar.
    - `NODE_ENV=production`
    - `TRUST_PROXY=true` si va detras de Nginx, Apache, Render, Railway
      o Cloudflare
-4. `npm run migrar` (una sola vez, si llevas los datos)
+   - `MONGODB_URI` apuntando a tu MongoDB
+4. `npm run migrar` y despues `npm run migrar-mongo` (una sola vez)
 5. Arrancalo con PM2 o similar: `pm2 start server.js --name marketplace`
 
 Con `NODE_ENV=production` la cookie de sesion solo viaja por HTTPS.
@@ -66,7 +67,9 @@ server.js              Monta la aplicacion y arranca. Nada mas.
 
 lib/
   paths.js             Rutas absolutas del proyecto.
-  store.js             UNICO punto de acceso a los datos.
+  store.js             UNICO punto de acceso a los datos. Elige motor.
+  store-mongo.js         motor MongoDB   (si hay MONGODB_URI)
+  store-json.js          motor archivos  (si no la hay)
   auth.js              Sesiones (JWT en cookie), permisos y que datos
                        se pueden devolver al navegador.
 
@@ -79,6 +82,7 @@ routes/
 
 scripts/
   migrar.js            Ordena y repara los datos antiguos (idempotente)
+  migrar-mongo.js      Copia data/*.json a MongoDB y lo verifica
   limpiar-pruebas.js   Borra los usuarios/pedidos que crean las pruebas
   arreglar-texto.js    Corrige el texto con la codificacion rota
   preparar-html.js     Anade sesion.js y la etiqueta viewport a las paginas
@@ -107,6 +111,8 @@ tests/                 Pruebas automaticas
 | `npm run migrar` | Ordena los datos antiguos. Hace copia antes |
 | `npm test` | Prueba la API de punta a punta (con el servidor arrancado) |
 | `npm run limpiar-pruebas` | Borra los datos que crean las pruebas |
+| `npm run migrar-mongo` | Copia los datos de data/ a MongoDB y comprueba uno a uno que llegaron |
+| `npm run test-motores` | Pasa las mismas pruebas con archivos Y con MongoDB, y compara |
 
 Para las pruebas del navegador (necesitan Python y Playwright):
 
@@ -144,17 +150,62 @@ Si cambias `JWT_SECRET`, se cierran todas las sesiones abiertas.
 
 ---
 
+## MongoDB
+
+El proyecto funciona con dos motores de datos, y se elige con una sola
+variable del `.env`:
+
+| `MONGODB_URI` | Motor usado |
+|---|---|
+| vacia | archivos JSON en `data/` |
+| con valor | MongoDB |
+
+Los dos hacen exactamente lo mismo. `npm run test-motores` pasa las 92
+pruebas con los dos y compara los resultados, para que no puedan
+separarse sin que se note.
+
+**Para el servidor de produccion hay que usar MongoDB.** El motivo no es
+moda: con archivos, dos compras a la vez de la ultima unidad de un
+producto pueden vender las dos. Con MongoDB el descuento de stock es una
+sola operacion atomica y eso no puede pasar.
+
+Esta comprobado, no es teoria: hay una prueba que lanza 8 compras
+simultaneas de un producto con 1 unidad y exige que gane exactamente
+una. Con una version no atomica a proposito, esa prueba da 5 ganadores
+y 5 pedidos para 1 unidad.
+
+### Pasar a MongoDB
+
+```bash
+# 1. Pon la direccion de tu MongoDB en el .env
+MONGODB_URI=mongodb://127.0.0.1:27017/marketplace
+
+# 2. Copia los datos (hace la comprobacion sola)
+npm run migrar-mongo
+
+# 3. Arranca
+npm start
+```
+
+`migrar-mongo` **no borra nada** de `data/`. Si algo va mal, quita
+`MONGODB_URI` del `.env` y el proyecto vuelve a los archivos al instante.
+
+Indices creados automaticamente: correo y username unicos, vendedor de
+cada anuncio, categoria, precio, comprador y vendedor de cada pedido, y
+busqueda por texto en titulo y descripcion.
+
+---
+
 ## Pendiente
 
-- **MongoDB**: hoy los datos van en archivos JSON. Todo el acceso pasa
-  por `lib/store.js`, asi que la migracion afecta solo a ese archivo;
-  las rutas no se tocan. La variable `MONGODB_URI` ya esta reservada en
-  `.env.example`.
 - **Chat**: `public/chat.js` guarda los mensajes en el navegador de
   quien escribe. No hay backend de chat todavia, asi que los mensajes
   no llegan al otro usuario.
 - **Centro de resolucion**: el servidor ya tiene los endpoints; la
   pagina todavia guarda en el navegador.
+- **El listado publico `/all-ads`** todavia lee el catalogo completo y
+  filtra en memoria. Con los productos actuales va sobrado; conviene
+  pasarlo a consulta con indice antes de tener miles de anuncios.
 - 7 pedidos antiguos se quedaron sin vendedor porque el producto al que
   correspondian ya no existe y no hay de donde deducirlo. Los nuevos lo
   guardan siempre.

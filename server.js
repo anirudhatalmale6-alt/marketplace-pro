@@ -52,7 +52,13 @@ if (process.env.JWT_SECRET === SECRETO_EJEMPLO) {
   process.exit(1);
 }
 
-[DATA_DIR, UPLOADS_DIR].forEach(dir => {
+/* uploads/ hace falta siempre (las fotos son archivos aunque los datos
+   esten en MongoDB). data/ solo si se usa el motor de archivos. */
+const carpetas = process.env.MONGODB_URI
+  ? [UPLOADS_DIR]
+  : [DATA_DIR, UPLOADS_DIR];
+
+carpetas.forEach(dir => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
@@ -198,16 +204,45 @@ app.use((error, req, res, next) => {
 
 const PORT = Number(process.env.PORT) || 3000;
 
-const server = app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  console.log(`Modo: ${PRODUCCION ? "produccion" : "desarrollo"}`);
-});
+const store = require("./lib/store");
+
+let server = null;
+
+/* Primero se conecta a la base de datos y DESPUES se abre el puerto.
+
+   Si se hiciera al reves, el sitio aceptaria visitas durante unos
+   segundos sin base de datos detras y esas primeras peticiones
+   fallarian sin motivo aparente. */
+store
+  .conectar()
+  .then(({ motor, destino }) => {
+    console.log(`Datos: ${motor} (${destino})`);
+
+    server = app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+      console.log(`Modo: ${PRODUCCION ? "produccion" : "desarrollo"}`);
+    });
+  })
+  .catch(error => {
+    console.error(
+      "\nNO SE PUDO CONECTAR A LA BASE DE DATOS\n" +
+        `${error.message}\n\n` +
+        "Comprueba MONGODB_URI en el .env, o quitala para volver a los\n" +
+        "archivos JSON de la carpeta data/.\n"
+    );
+    process.exit(1);
+  });
 
 /* Cierre limpio: da tiempo a que termine lo que se este escribiendo */
 ["SIGINT", "SIGTERM"].forEach(senal => {
-  process.on(senal, () => {
+  process.on(senal, async () => {
     console.log(`\n${senal} recibido, cerrando servidor...`);
-    server.close(() => process.exit(0));
+
+    if (server) server.close();
+
+    await store.cerrar().catch(() => {});
+
+    process.exit(0);
   });
 });
 

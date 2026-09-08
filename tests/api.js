@@ -366,6 +366,83 @@ function cliente() {
     check(`registro rechaza: ${nombre}`, r.status === esperado, `dio ${r.status} ${JSON.stringify(r.json)}`);
   }
 
+
+  console.log("\n=== 17. Dos compradores a la vez por la ULTIMA unidad ===");
+
+  /* Esta es la prueba que justifica MongoDB.
+
+     Se publica un producto con UNA sola unidad y se lanzan 8 compras
+     simultaneas. Exactamente una debe salir bien y siete deben recibir
+     "no queda stock". Si salieran dos, se habria vendido algo que no
+     existe: el fallo mas caro que puede tener una tienda. */
+
+  const fdUno = new FormData();
+  fdUno.append("title", "Ultima unidad");
+  fdUno.append("description", "Solo queda una");
+  fdUno.append("price", "999");
+  fdUno.append("cantidad", "1");
+  fdUno.append("categoria", "celulares");
+  fdUno.append("condicion", "nuevo");
+  fdUno.append("images", new Blob([png], { type: "image/png" }), "foto.png");
+
+  const crearUno = await vend("POST", "/create-ad", fdUno);
+  const adUnico = crearUno.json.ad && crearUno.json.ad.id;
+  check("CONTROL: producto de prueba con stock 1", crearUno.status === 201 && crearUno.json.ad.cantidad === 1,
+    JSON.stringify(crearUno.json && crearUno.json.ad && crearUno.json.ad.cantidad));
+
+  /* 8 compradores distintos, cada uno con su sesion */
+  const compradores = [];
+
+  for (let i = 0; i < 8; i += 1) {
+    const c = cliente();
+    await c("POST", "/register", {
+      accountType: "personal", nombre: "Carrera", apellido: `N${i}`,
+      email: `carrera${Date.now()}${i}@t.com`, password: "clave12345",
+      telefono: "8090000009", country: "RD", state: "SD", city: "DN",
+      sector: "x", address: "y", zip: "1"
+    });
+    compradores.push(c);
+  }
+
+  /* PRE-CALENTAR antes de la carrera.
+
+     Sin esto la prueba NO SIRVE. Cada cliente tiene que abrir su
+     conexion TCP la primera vez, y eso escalona las peticiones unos
+     10 ms unas de otras: llegan en fila india y nunca coinciden dentro
+     del descuento de stock. La prueba pasaria siempre, incluso con un
+     descuento mal hecho.
+
+     Comprobado: con una version no atomica de descontar(), asi tal
+     cual la prueba da 1 ganador (parece correcta); pre-calentando,
+     da 5 ganadores y 5 pedidos para 1 unidad, que es el fallo real. */
+  await Promise.all(compradores.map(c => c("GET", "/me")));
+  await new Promise(r => setTimeout(r, 200));
+
+  /* Ahora si: todas a la vez, sin esperar unas a otras */
+  const intentos = await Promise.all(
+    compradores.map(c => c("POST", "/checkout", { items: [{ adId: adUnico, cantidad: 1 }] }))
+  );
+
+  const ganadores = intentos.filter(r => r.status === 201).length;
+  const rechazados = intentos.filter(r => r.status === 409).length;
+
+  console.log("     codigos devueltos:", intentos.map(r => r.status).join(", "));
+
+  check(`exactamente 1 de 8 compras simultaneas sale bien (fueron ${ganadores})`,
+    ganadores === 1, intentos.map(r => r.status).join(","));
+  check(`las otras 7 reciben "sin stock" (fueron ${rechazados})`,
+    rechazados === 7, intentos.map(r => r.status).join(","));
+
+  const stockFinal = await anon("GET", `/ads/${adUnico}`);
+  check("el stock queda en 0, nunca en negativo", stockFinal.json.cantidad === 0,
+    `quedo en ${stockFinal.json.cantidad}`);
+
+  const pedidosDelProducto = (await vend("GET", "/seller-orders")).json
+    .filter(o => (o.productos || []).some(p => Number(p.adId) === Number(adUnico)));
+
+  check("solo se creo UN pedido para esa unidad",
+    pedidosDelProducto.length === 1, `se crearon ${pedidosDelProducto.length}`);
+
   console.log(`\n=== RESULTADO: ${ok} correctas, ${fail} fallidas ===\n`);
   process.exit(fail ? 1 : 0);
 })().catch(e => { console.error("ERROR EN LA PRUEBA:", e); process.exit(1); });

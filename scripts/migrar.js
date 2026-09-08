@@ -170,8 +170,41 @@ async function migrarUsuarios() {
   let correos = 0;
   let tipos = 0;
   let usernames = 0;
+  let ids = 0;
 
   const usados = new Set();
+
+  /* --- IDENTIFICADORES QUE FALTAN ---
+
+     Las 10 cuentas mas antiguas se crearon antes de que el registro
+     empezara a guardar un "id", asi que no lo tienen. Se nota poco
+     porque las busquedas van por correo, pero:
+
+       - el identificador del usuario acaba dentro del token de sesion
+         como "undefined";
+       - MongoDB lleva un indice unico sobre "id", y varios documentos
+         sin ese campo chocan entre si al importarlos.
+
+     Se les asigna un id contando hacia arriba desde una base ANTERIOR
+     al id mas bajo que ya existe, para no pisar ninguno y para que el
+     orden por id siga siendo mas o menos cronologico. */
+  const idsExistentes = users
+    .map(u => Number(u.id))
+    .filter(n => Number.isFinite(n));
+
+  const minimo = idsExistentes.length ? Math.min(...idsExistentes) : Date.now();
+
+  let siguiente = minimo - users.length - 1;
+
+  users.forEach(user => {
+    if (user.id === undefined || user.id === null || user.id === "") {
+      user.id = siguiente;
+      siguiente += 1;
+      ids += 1;
+    } else {
+      user.id = Number(user.id);
+    }
+  });
 
   for (const user of users) {
     /* --- correo en minusculas --- */
@@ -245,6 +278,7 @@ async function migrarUsuarios() {
   guardar("users", users);
 
   anotar(`users: ${users.length} cuentas`);
+  if (ids) anotar(`users: ${ids} cuentas antiguas no tenian "id", se les asigno uno`);
   if (cifradas) anotar(`users: ${cifradas} contrasenas cifradas (estaban en texto plano)`);
   if (correos) anotar(`users: ${correos} correos pasados a minusculas`);
   if (tipos) anotar(`users: ${tipos} accountType corregidos a "personal"`);

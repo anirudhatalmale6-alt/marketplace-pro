@@ -44,6 +44,28 @@ function normalizarEstado(valor) {
   return String(valor || "").trim().toLowerCase();
 }
 
+/* Devuelve al anuncio las unidades que se habian reservado.
+
+   Se usa en dos sitios: cuando el checkout falla a mitad, y cuando se
+   cancela un pedido. Descontar es "restar si hay bastante"; devolver
+   es sumar sin condiciones, asi que se hace con descontar en negativo
+   sobre un campo que siempre admite el cambio. */
+async function devolverStock(lineas) {
+  for (const l of lineas) {
+    /* eslint-disable no-await-in-loop */
+    const ad = await store.findOne("ads", { id: Number(l.adId) });
+
+    if (!ad) continue;
+
+    await store.updateOne(
+      "ads",
+      { id: Number(l.adId) },
+      { cantidad: (Number(ad.cantidad) || 0) + (Number(l.cantidad) || 0) }
+    );
+    /* eslint-enable no-await-in-loop */
+  }
+}
+
 /* =========================
    CREAR PEDIDO (CHECKOUT)
 
@@ -110,57 +132,75 @@ async function crearPedido(req, res, next) {
       direcciones[0] ||
       null;
 
-    /* Reserva de stock: comprobar y descontar dentro del mismo turno de
-       la cola, para que dos compras a la vez no vendan la misma unidad */
-    const reserva = await store.update("ads", ads => {
-      const lineas = [];
+    /* =========================
+       RESERVA DE STOCK
 
-      for (const [adId, cantidad] of porProducto) {
-        const ad = ads.find(a => Number(a.id) === adId);
+       Se descuenta producto a producto con una operacion ATOMICA:
+       la base de datos comprueba "hay al menos N" y resta N en un solo
+       paso. Si dos personas compran la ultima unidad a la vez, una de
+       las dos recibe null. No hay hueco entre comprobar y descontar,
+       que es donde se cuela una venta de mas.
 
-        if (!ad || ad.activo === false) {
-          return { error: `El producto ya no esta disponible`, codigo: 404 };
-        }
+       Antes esto se hacia leyendo la lista, comprobando y volviendo a
+       escribirla. Dentro de un solo proceso funcionaba; con dos
+       servidores contra la misma base, no.
 
-        if (normalizarEmail(ad.sellerEmail) === req.email) {
-          return { error: "No puedes comprar tu propio producto", codigo: 400 };
-        }
+       Si un producto falla a mitad, se DEVUELVE lo ya reservado antes
+       de responder. Si no, quedaria stock bloqueado sin ningun pedido
+       detras. */
+    const lineas = [];
+    let fallo = null;
 
-        const disponible = Number(ad.cantidad) || 0;
+    for (const [adId, cantidad] of porProducto) {
+      /* eslint-disable no-await-in-loop */
+      const ad = await store.findOne("ads", { id: adId });
 
-        if (disponible < cantidad) {
-          return {
-            error: `"${ad.title}": solo quedan ${disponible} unidades`,
-            codigo: 409
-          };
-        }
-
-        lineas.push({
-          adId: Number(ad.id),
-          title: ad.title,
-          imagen: ad.image,
-          /* El precio sale del anuncio, NO de lo que mande el navegador */
-          precio: Number(ad.price) || 0,
-          cantidad,
-          subtotal: (Number(ad.price) || 0) * cantidad,
-          vendedor: normalizarEmail(ad.sellerEmail),
-          vendedorNombre: ad.sellerName || "",
-          vendedorUsername: ad.sellerUsername || ""
-        });
+      if (!ad || ad.activo === false) {
+        fallo = { error: "El producto ya no esta disponible", codigo: 404 };
+        break;
       }
 
-      /* Todo comprobado: ahora si se descuenta */
-      lineas.forEach(l => {
-        const ad = ads.find(a => Number(a.id) === l.adId);
-        ad.cantidad = (Number(ad.cantidad) || 0) - l.cantidad;
+      if (normalizarEmail(ad.sellerEmail) === req.email) {
+        fallo = { error: "No puedes comprar tu propio producto", codigo: 400 };
+        break;
+      }
+
+      const reservado = await store.descontar(
+        "ads",
+        { id: adId, activo: { $ne: false } },
+        "cantidad",
+        cantidad
+      );
+
+      if (!reservado) {
+        fallo = {
+          error: `"${ad.title}": solo quedan ${Number(ad.cantidad) || 0} unidades`,
+          codigo: 409
+        };
+        break;
+      }
+
+      lineas.push({
+        adId: Number(ad.id),
+        title: ad.title,
+        imagen: ad.image,
+        /* El precio sale del anuncio, NO de lo que mande el navegador */
+        precio: Number(ad.price) || 0,
+        cantidad,
+        subtotal: (Number(ad.price) || 0) * cantidad,
+        vendedor: normalizarEmail(ad.sellerEmail),
+        vendedorNombre: ad.sellerName || "",
+        vendedorUsername: ad.sellerUsername || ""
       });
-
-      return { lineas };
-    });
-
-    if (reserva.error) {
-      return res.status(reserva.codigo).json({ message: reserva.error });
+      /* eslint-enable no-await-in-loop */
     }
+
+    if (fallo) {
+      await devolverStock(lineas);
+      return res.status(fallo.codigo).json({ message: fallo.error });
+    }
+
+    const reserva = { lineas };
 
     /* Un pedido por vendedor: cada vendedor gestiona el suyo */
     const porVendedor = new Map();
@@ -225,24 +265,27 @@ async function crearPedido(req, res, next) {
 
       await store.insert("orders", orden);
 
-      /* Registro de venta para el vendedor */
-      await store.update("sales", sales => {
-        lineas.forEach(l => {
-          sales.push({
-            id: store.nuevoId(),
-            orderId: orden.id,
-            adId: l.adId,
-            producto: l.title,
-            precio: l.precio,
-            cantidad: l.cantidad,
-            total: l.subtotal,
-            vendedor,
-            comprador: req.email,
-            estado: "pendiente",
-            fecha: ahora
-          });
+      /* Registro de venta para el vendedor.
+
+         Insercion suelta por linea: antes se leia sales.json ENTERO
+         para anadir una fila, en cada compra. */
+      for (const l of lineas) {
+        /* eslint-disable no-await-in-loop */
+        await store.insertOne("sales", {
+          id: store.nuevoId(),
+          orderId: orden.id,
+          adId: l.adId,
+          producto: l.title,
+          precio: l.precio,
+          cantidad: l.cantidad,
+          total: l.subtotal,
+          vendedor,
+          comprador: req.email,
+          estado: "pendiente",
+          fecha: ahora
         });
-      });
+        /* eslint-enable no-await-in-loop */
+      }
 
       creados.push(orden);
     }
@@ -299,12 +342,14 @@ router.post("/buy", requireAuth, (req, res, next) => {
 
 router.get("/my-orders", requireAuth, async (req, res, next) => {
   try {
-    const orders = await store.filter(
+    /* Consulta con indice sobre "comprador" y ordenada por la propia
+       base de datos, en vez de traerse TODOS los pedidos del sitio y
+       filtrarlos aqui. */
+    const orders = await store.findMany(
       "orders",
-      o => normalizarEmail(o.comprador) === req.email
+      { comprador: req.email },
+      { orden: { fecha: -1 } }
     );
-
-    orders.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     res.json(orders);
   } catch (error) {
@@ -317,12 +362,11 @@ router.get("/my-orders", requireAuth, async (req, res, next) => {
    pedidos de quien esta logueado. */
 router.get("/my-orders/:email", requireAuth, async (req, res, next) => {
   try {
-    const orders = await store.filter(
+    const orders = await store.findMany(
       "orders",
-      o => normalizarEmail(o.comprador) === req.email
+      { comprador: req.email },
+      { orden: { fecha: -1 } }
     );
-
-    orders.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     res.json(orders);
   } catch (error) {
@@ -338,12 +382,11 @@ router.get("/my-orders/:email", requireAuth, async (req, res, next) => {
 
 router.get("/seller-orders", requireAuth, async (req, res, next) => {
   try {
-    const orders = await store.filter(
+    const orders = await store.findMany(
       "orders",
-      o => normalizarEmail(o.vendedor) === req.email
+      { vendedor: req.email },
+      { orden: { fecha: -1 } }
     );
-
-    orders.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     res.json(orders);
   } catch (error) {
@@ -357,12 +400,11 @@ router.get("/seller-orders", requireAuth, async (req, res, next) => {
 
 router.get("/my-sales", requireAuth, async (req, res, next) => {
   try {
-    const sales = await store.filter(
+    const sales = await store.findMany(
       "sales",
-      v => normalizarEmail(v.vendedor) === req.email
+      { vendedor: req.email },
+      { orden: { fecha: -1 } }
     );
-
-    sales.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     res.json(sales);
   } catch (error) {
@@ -441,22 +483,19 @@ router.put("/update-order-status/:id", requireAuth, async (req, res, next) => {
     }
 
     if (resultado.devolverStock) {
-      await store.update("ads", ads => {
-        (resultado.orden.productos || []).forEach(p => {
-          const ad = ads.find(a => Number(a.id) === Number(p.adId));
-          if (ad) ad.cantidad = (Number(ad.cantidad) || 0) + Number(p.cantidad || 0);
-        });
-      });
+      await devolverStock(resultado.orden.productos || []);
     }
 
     /* El registro de ventas sigue el mismo estado */
-    await store.update("sales", sales => {
-      sales.forEach(v => {
-        if (Number(v.orderId) === Number(resultado.orden.id)) {
-          v.estado = resultado.orden.estado;
-        }
-      });
+    const ventas = await store.findMany("sales", {
+      orderId: Number(resultado.orden.id)
     });
+
+    for (const v of ventas) {
+      /* eslint-disable no-await-in-loop */
+      await store.updateOne("sales", { id: v.id }, { estado: resultado.orden.estado });
+      /* eslint-enable no-await-in-loop */
+    }
 
     res.json({
       message: "Estado actualizado",

@@ -53,7 +53,7 @@ const limiteRegistro = rateLimit({
    USERNAME AUTOMATICO
 ========================= */
 
-function generarUsername(base, usados) {
+async function generarUsername(base) {
   const limpio = String(base || "usuario")
     .toLowerCase()
     .normalize("NFD")
@@ -64,12 +64,23 @@ function generarUsername(base, usados) {
   let candidato = limpio;
   let n = 0;
 
-  /* Antes se anadia un numero al azar y podia repetirse. Ahora se
-     comprueba contra los que ya existen. */
-  while (usados.has(candidato)) {
+  /* Antes se anadia un numero al azar y podia repetirse.
+
+     Se pregunta a la base de datos por cada candidato (consulta con
+     indice) en vez de traerse la lista completa de usuarios solo para
+     saber que nombres estan cogidos. */
+  /* eslint-disable no-await-in-loop */
+  while (await store.findOne("users", { username: candidato })) {
     n += 1;
     candidato = `${limpio}${n}`;
+
+    /* Salvaguarda: si algo va muy mal, no dar vueltas para siempre */
+    if (n > 500) {
+      candidato = `${limpio}${store.nuevoId()}`;
+      break;
+    }
   }
+  /* eslint-enable no-await-in-loop */
 
   return candidato;
 }
@@ -113,85 +124,82 @@ router.post("/register", limiteRegistro, async (req, res, next) => {
       });
     }
 
+    /* Comprobaciones que dependen del tipo de cuenta, antes de gastar
+       tiempo cifrando la contrasena */
+    if (accountType === "personal" && (!data.nombre || !data.apellido)) {
+      return res.status(400).json({ message: "Nombre y apellido requeridos" });
+    }
+
+    if (
+      accountType === "business" &&
+      (!data.businessName || !data.documentType || !data.documentNumber)
+    ) {
+      return res.status(400).json({ message: "Datos del negocio incompletos" });
+    }
+
+    if (await store.findOne("users", { email })) {
+      return res.status(400).json({ message: "El usuario ya existe" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, RONDAS_BCRYPT);
 
-    /* Se comprueba el duplicado y se inserta dentro del mismo turno de
-       la cola. Antes, dos registros simultaneos con el mismo correo
-       pasaban los dos. */
-    const resultado = await store.update("users", users => {
-      const existe = users.some(u => normalizarEmail(u.email) === email);
+    const base = {
+      id: store.nuevoId(),
+      accountType,
+      email,
+      password: hashedPassword,
+      telefono,
+      country: data.country || "",
+      state: data.state || "",
+      city: data.city || "",
+      sector: data.sector || "",
+      address: data.address || "",
+      zip: data.zip || "",
+      reference: data.reference || "",
+      rating: 0,
+      totalSales: 0,
+      createdAt: new Date().toISOString()
+    };
 
-      if (existe) return { error: "El usuario ya existe" };
+    const nuevo =
+      accountType === "personal"
+        ? {
+            ...base,
+            nombre: String(data.nombre).trim(),
+            apellido: String(data.apellido).trim(),
+            username: await generarUsername(`${data.nombre}${data.apellido}`)
+          }
+        : {
+            ...base,
+            nombre: String(data.nombre || "").trim(),
+            apellido: String(data.apellido || "").trim(),
+            businessName: String(data.businessName).trim(),
+            documentType: data.documentType,
+            documentNumber: data.documentNumber,
+            username: await generarUsername(data.businessName)
+          };
 
-      const usados = new Set(users.map(u => u.username).filter(Boolean));
-
-      const base = {
-        id: store.nuevoId(),
-        accountType,
-        email,
-        password: hashedPassword,
-        telefono,
-        country: data.country || "",
-        state: data.state || "",
-        city: data.city || "",
-        sector: data.sector || "",
-        address: data.address || "",
-        zip: data.zip || "",
-        reference: data.reference || "",
-        rating: 0,
-        totalSales: 0,
-        createdAt: new Date().toISOString()
-      };
-
-      let nuevo;
-
-      if (accountType === "personal") {
-        if (!data.nombre || !data.apellido) {
-          return { error: "Nombre y apellido requeridos" };
-        }
-
-        nuevo = {
-          ...base,
-          nombre: String(data.nombre).trim(),
-          apellido: String(data.apellido).trim(),
-          username: generarUsername(
-            `${data.nombre}${data.apellido}`,
-            usados
-          )
-        };
-      } else {
-        if (!data.businessName || !data.documentType || !data.documentNumber) {
-          return { error: "Datos del negocio incompletos" };
-        }
-
-        nuevo = {
-          ...base,
-          nombre: String(data.nombre || "").trim(),
-          apellido: String(data.apellido || "").trim(),
-          businessName: String(data.businessName).trim(),
-          documentType: data.documentType,
-          documentNumber: data.documentNumber,
-          username: generarUsername(data.businessName, usados)
-        };
+    try {
+      await store.insertOne("users", nuevo);
+    } catch (error) {
+      /* La comprobacion de arriba deja pasar el caso de dos registros
+         con el mismo correo EN EL MISMO INSTANTE. Quien decide de
+         verdad es el indice unico de la base de datos, que rechaza el
+         segundo. Aqui se traduce ese rechazo a un mensaje normal. */
+      if (error && error.code === 11000) {
+        return res.status(400).json({ message: "El usuario ya existe" });
       }
-
-      users.push(nuevo);
-
-      return { user: nuevo };
-    });
-
-    if (resultado.error) {
-      return res.status(400).json({ message: resultado.error });
+      throw error;
     }
 
     /* Al registrarse ya queda la sesion abierta */
-    ponerCookie(res, firmarToken(resultado.user));
+    ponerCookie(res, firmarToken(nuevo));
 
     console.log("Usuario registrado:", email);
 
     res.status(201).json({
       message: "Registro exitoso",
-      user: usuarioPropio(resultado.user)
+      user: usuarioPropio(nuevo)
     });
   } catch (error) {
     next(error);
@@ -213,10 +221,8 @@ router.post("/login", limiteLogin, async (req, res, next) => {
       });
     }
 
-    const user = await store.find(
-      "users",
-      u => normalizarEmail(u.email) === email
-    );
+    /* Consulta directa por indice, no recorriendo todos los usuarios */
+    const user = await store.findOne("users", { email });
 
     /* Mismo mensaje exista o no el usuario, para no revelar que
        correos estan registrados */
@@ -242,18 +248,16 @@ router.post("/login", limiteLogin, async (req, res, next) => {
 
     if (!passwordOk) return res.status(401).json(generico);
 
-    /* Actividad de inicio de sesion */
-    await store.update("login-activity", actividad => {
-      actividad.push({
-        id: store.nuevoId(),
-        email: normalizarEmail(user.email),
-        ip: req.ip,
-        userAgent: String(req.headers["user-agent"] || "").slice(0, 200),
-        fecha: new Date().toISOString()
-      });
+    /* Actividad de inicio de sesion.
 
-      /* No dejar que el archivo crezca sin limite */
-      if (actividad.length > 5000) actividad.splice(0, actividad.length - 5000);
+       Es una insercion suelta: antes se leia el historial ENTERO para
+       anadir una linea, en cada login. */
+    await store.insertOne("login-activity", {
+      id: store.nuevoId(),
+      email: normalizarEmail(user.email),
+      ip: req.ip,
+      userAgent: String(req.headers["user-agent"] || "").slice(0, 200),
+      fecha: new Date().toISOString()
     });
 
     ponerCookie(res, firmarToken(user));
@@ -302,14 +306,13 @@ router.get("/me", optionalAuth, (req, res) => {
 
 router.get("/login-activity", requireAuth, async (req, res, next) => {
   try {
-    const actividad = await store.filter(
+    const actividad = await store.findMany(
       "login-activity",
-      a => normalizarEmail(a.email) === req.email
+      { email: req.email },
+      { orden: { fecha: -1 }, limite: 50 }
     );
 
-    actividad.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-    res.json(actividad.slice(0, 50));
+    res.json(actividad);
   } catch (error) {
     next(error);
   }
@@ -356,14 +359,11 @@ router.post("/change-password", requireAuth, async (req, res, next) => {
 
     const hash = await bcrypt.hash(newPassword, RONDAS_BCRYPT);
 
-    await store.update("users", users => {
-      const i = users.findIndex(u => normalizarEmail(u.email) === req.email);
-
-      if (i === -1) return store.SIN_CAMBIOS;
-
-      users[i].password = hash;
-      users[i].passwordChangedAt = new Date().toISOString();
-    });
+    await store.updateOne(
+      "users",
+      { email: req.email },
+      { password: hash, passwordChangedAt: new Date().toISOString() }
+    );
 
     /* Al cambiar la contrasena se renueva el token */
     ponerCookie(res, firmarToken(req.user));
@@ -398,37 +398,24 @@ router.post("/close-account", requireAuth, async (req, res, next) => {
 
     const email = req.email;
 
-    await store.update("users", users => {
-      const i = users.findIndex(u => normalizarEmail(u.email) === email);
-      if (i !== -1) users.splice(i, 1);
-    });
-
-    await store.update("ads", ads => {
-      for (let i = ads.length - 1; i >= 0; i -= 1) {
-        if (normalizarEmail(ads[i].sellerEmail) === email) ads.splice(i, 1);
-      }
-    });
-
-    await store.update("login-activity", act => {
-      for (let i = act.length - 1; i >= 0; i -= 1) {
-        if (normalizarEmail(act[i].email) === email) act.splice(i, 1);
-      }
-    });
-
-    await store.update("favoritos", favs => {
-      for (let i = favs.length - 1; i >= 0; i -= 1) {
-        if (normalizarEmail(favs[i].email) === email) favs.splice(i, 1);
-      }
-    });
+    await store.deleteMany("users", { email });
+    await store.deleteMany("ads", { sellerEmail: email });
+    await store.deleteMany("login-activity", { email });
+    await store.deleteMany("favoritos", { email });
 
     /* Los pedidos y las ventas NO se borran: son el registro contable
        de la otra parte. Se marca la cuenta como eliminada. */
-    await store.update("orders", orders => {
-      orders.forEach(o => {
-        if (normalizarEmail(o.comprador) === email) o.compradorEliminado = true;
-        if (normalizarEmail(o.vendedor) === email) o.vendedorEliminado = true;
-      });
-    });
+    for (const o of await store.findMany("orders", { comprador: email })) {
+      /* eslint-disable no-await-in-loop */
+      await store.updateOne("orders", { id: o.id }, { compradorEliminado: true });
+      /* eslint-enable no-await-in-loop */
+    }
+
+    for (const o of await store.findMany("orders", { vendedor: email })) {
+      /* eslint-disable no-await-in-loop */
+      await store.updateOne("orders", { id: o.id }, { vendedorEliminado: true });
+      /* eslint-enable no-await-in-loop */
+    }
 
     quitarCookie(res);
 
