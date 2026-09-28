@@ -2,9 +2,14 @@
    CENTRO DE RESOLUCIÓN
 ========================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-  cargarCasos();
+  /* Los casos son privados: sin sesion no hay nada que ver */
+  const usuario = await Sesion.proteger("login.html?volver=resolucion.html");
+
+  if (!usuario) return;
+
+  await cargarCasos();
 
   const formulario =
     document.getElementById("formCaso");
@@ -199,7 +204,7 @@ function cerrarModal() {
    ENVIAR CASO
 ========================= */
 
-function enviarCaso(event) {
+async function enviarCaso(event) {
 
   event.preventDefault();
 
@@ -266,61 +271,47 @@ function enviarCaso(event) {
 
 
   /* =========================
-     CREAR CASO LOCAL
-     TEMPORAL
+     CREAR EL CASO EN EL SERVIDOR
+
+     Antes esto guardaba el caso en localStorage. O sea: el caso se
+     quedaba en el navegador de quien lo escribia y no llegaba a
+     ninguna parte. Nadie podia atenderlo, y si el usuario entraba
+     desde otro telefono sus casos no aparecian.
+
+     El servidor ya tenia /resolution-cases hecho; solo faltaba que la
+     pagina lo llamara.
   ========================= */
 
-  let casos =
-    obtenerCasos();
+  const boton = document.querySelector("#formCaso button[type=submit]");
+  if (boton) boton.disabled = true;
 
+  const { ok, status, datos } = await Sesion.api("/resolution-cases", {
+    method: "POST",
+    body: { tipo, asunto, descripcion, pedido }
+  });
 
-  const nuevoCaso = {
+  if (boton) boton.disabled = false;
 
-    id: Date.now(),
+  if (status === 401) {
+    mostrarMensaje("Tu sesion expiro. Vuelve a iniciar sesion.");
+    window.location.href = "login.html?volver=resolucion.html";
+    return;
+  }
 
-    email,
+  if (!ok) {
+    /* El servidor comprueba que el pedido exista y sea tuyo, asi que
+       aqui se muestra el motivo real en vez de un mensaje generico */
+    mostrarMensaje((datos && datos.message) || "No se pudo crear el caso.");
+    return;
+  }
 
-    tipo,
-
-    asunto,
-
-    descripcion,
-
-    pedido,
-
-    estado: "abierto",
-
-    fecha:
-      new Date().toLocaleString()
-
-  };
-
-
-  casos.unshift(
-    nuevoCaso
-  );
-
-
-  guardarCasos(
-    casos
-  );
-
-
-  document
-    .getElementById(
-      "formCaso"
-    )
-    .reset();
-
+  document.getElementById("formCaso").reset();
 
   cerrarModal();
 
-  cargarCasos();
+  await cargarCasos();
 
-
-  mostrarMensaje(
-    "Caso creado correctamente. ✅"
-  );
+  mostrarMensaje("Caso creado correctamente.");
 
 }
 
@@ -329,41 +320,14 @@ function enviarCaso(event) {
    OBTENER CASOS
 ========================= */
 
-function obtenerCasos() {
+async function obtenerCasos() {
 
-  const email =
-    obtenerEmail();
+  /* Los casos viven en el servidor, no en el navegador.
+     Antes se leian de localStorage: solo los veia quien los escribio,
+     y desde ese mismo telefono. */
+  const { ok, datos } = await Sesion.api("/resolution-cases");
 
-  if (!email) {
-    return [];
-  }
-
-
-  try {
-
-    const casos =
-      JSON.parse(
-        localStorage.getItem(
-          "casosResolucion"
-        )
-      ) || [];
-
-
-    return casos.filter(
-      caso =>
-        caso.email === email
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Error obteniendo casos:",
-      error
-    );
-
-    return [];
-
-  }
+  return ok && Array.isArray(datos) ? datos : [];
 
 }
 
@@ -372,60 +336,17 @@ function obtenerCasos() {
    GUARDAR CASOS
 ========================= */
 
-function guardarCasos(casos) {
-
-  const email =
-    obtenerEmail();
-
-  if (!email) {
-    return;
-  }
+/* guardarCasos() se elimino: ya no se guarda nada en el navegador.
+   Crear un caso es una llamada al servidor (ver enviarCaso). */
 
 
-  let todos = [];
-
-
-  try {
-
-    todos =
-      JSON.parse(
-        localStorage.getItem(
-          "casosResolucion"
-        )
-      ) || [];
-
-  } catch (error) {
-
-    todos = [];
-
-  }
-
-
-  todos =
-    todos.filter(
-      caso =>
-        caso.email !== email
-    );
-
-
-  todos.push(
-    ...casos
-  );
-
-
-  localStorage.setItem(
-    "casosResolucion",
-    JSON.stringify(todos)
-  );
-
-}
 
 
 /* =========================
    CARGAR CASOS
 ========================= */
 
-function cargarCasos() {
+async function cargarCasos() {
 
   const lista =
     document.getElementById(
@@ -444,7 +365,7 @@ function cargarCasos() {
 
 
   const casos =
-    obtenerCasos();
+    await obtenerCasos();
 
 
   contador.textContent =

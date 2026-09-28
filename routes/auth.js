@@ -39,9 +39,11 @@ const limiteLogin = rateLimit({
   }
 });
 
+/* Tambien configurable: al pasar las pruebas se crean muchas cuentas
+   seguidas y el limite de produccion las corta a mitad. */
 const limiteRegistro = rateLimit({
   windowMs: 60 * 60 * 1000,
-  limit: 20,
+  limit: Number(process.env.REGISTRO_MAX_CUENTAS) || 20,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

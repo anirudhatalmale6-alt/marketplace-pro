@@ -35,7 +35,98 @@ function cerrarTarjeta() {
 }
 
 
+/* =========================
+   PREFERENCIAS DE PAGO DEL VENDEDOR
+
+   /get-pagos y /update-pagos existian en el servidor desde la Fase 1
+   pero ninguna pantalla los usaba. Son los metodos que el vendedor
+   dice aceptar, y es lo que ve el comprador en el producto.
+========================= */
+
+async function cargarPreferenciasPago() {
+  const { ok, datos } = await Sesion.api("/get-pagos");
+
+  if (!ok || !datos) return;
+
+  const p = datos.preferencias || {};
+
+  const marcar = (id, valor) => {
+    const el = document.getElementById(id);
+    if (el) el.checked = Boolean(valor);
+  };
+
+  marcar("aceptaTransferencia", p.transferencia);
+  marcar("aceptaEfectivo", p.paypal); /* se reutiliza el campo existente */
+  marcar("aceptaTarjeta", p.tarjeta);
+}
+
+async function guardarPreferenciasPago() {
+  const leer = id => {
+    const el = document.getElementById(id);
+    return el ? el.checked : false;
+  };
+
+  const boton = document.getElementById("btnGuardarPreferencias");
+  if (boton) boton.disabled = true;
+
+  const { ok, datos } = await Sesion.api("/update-pagos", {
+    method: "PUT",
+    body: {
+      transferencia: leer("aceptaTransferencia"),
+      paypal: leer("aceptaEfectivo"),
+      tarjeta: false /* la tarjeta no se puede activar todavia */
+    }
+  });
+
+  if (boton) boton.disabled = false;
+
+  const caja = document.getElementById("mensajePreferencias");
+
+  if (caja) {
+    caja.textContent = ok
+      ? "Guardado."
+      : (datos && datos.message) || "No se pudo guardar.";
+    caja.className = "mensaje " + (ok ? "mensaje-exito" : "mensaje-error");
+    caja.style.display = "block";
+    setTimeout(() => { caja.style.display = "none"; }, 4000);
+  }
+}
+
+/* Se desactivan los campos de la tarjeta al cargar la pagina.
+
+   El formulario pedia numero completo y CVV y despues NO guardaba
+   nada (el comentario original lo decia). El problema es que el
+   usuario no lo sabe: escribe los datos reales de su tarjeta en un
+   formulario que no va a ninguna parte. Mientras no haya pasarela de
+   pago, lo correcto es que no se pueda escribir nada. */
+function desactivarFormularioTarjeta() {
+  const form = document.getElementById("formTarjeta");
+
+  if (!form) return;
+
+  form.querySelectorAll("input, select, button").forEach(el => {
+    el.disabled = true;
+  });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const usuario = await Sesion.proteger("login.html?volver=pagos.html");
+
+  if (!usuario) return;
+
+  desactivarFormularioTarjeta();
+  cargarPreferenciasPago();
+});
+
 function guardarTarjeta() {
+  alert(
+    "Los pagos con tarjeta todavia no estan activos. " +
+    "Usa transferencia bancaria por ahora."
+  );
+  return;
+}
+
+function guardarTarjetaDesactivada() {
 
   const tipo =
     document.getElementById("tipoTarjeta").value;

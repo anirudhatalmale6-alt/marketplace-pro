@@ -23,6 +23,56 @@
     </div>
 
 
+    <!-- QUE METODOS ACEPTAS COMO VENDEDOR -->
+    <div class="metodo-pago bloque-preferencias">
+
+      <div class="metodo-contenido">
+
+        <h2>Qué pagos aceptas cuando vendes</h2>
+
+        <p>
+          Esto es lo que verán los compradores en tus productos.
+          Marca solo lo que de verdad puedas recibir.
+        </p>
+
+        <div class="preferencias-pago">
+
+          <label class="interruptor">
+            <input type="checkbox" id="aceptaTransferencia">
+            <span>Transferencia bancaria</span>
+          </label>
+
+          <label class="interruptor">
+            <input type="checkbox" id="aceptaEfectivo">
+            <span>Efectivo al momento de la entrega</span>
+          </label>
+
+          <label class="interruptor">
+            <input type="checkbox" id="aceptaTarjeta" disabled>
+            <span>
+              Tarjeta
+              <small>(todavía no disponible)</small>
+            </span>
+          </label>
+
+        </div>
+
+        <button
+          type="button"
+          id="btnGuardarPreferencias"
+          class="btn-guardar"
+          onclick="guardarPreferenciasPago()"
+        >
+          Guardar
+        </button>
+
+        <div id="mensajePreferencias" class="mensaje" style="display:none;"></div>
+
+      </div>
+
+    </div>
+
+
     <!-- PAYPAL -->
 
     <div class="metodo-pago">
@@ -89,6 +139,15 @@
       id="formTarjeta"
       class="form-pago"
       style="display:none;">
+
+      <div class="aviso-tarjeta">
+        <strong>Los pagos con tarjeta todavía no están activos.</strong>
+        <p>
+          Por seguridad este formulario está desactivado: no escribas aquí
+          los datos de tu tarjeta. Se activará cuando se conecte la pasarela
+          de pago.
+        </p>
+      </div>
 
       <div class="form-header">
 

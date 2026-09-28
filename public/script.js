@@ -208,124 +208,72 @@ async function finalizarCompra() {
 }
 
 // --- BUSCAR PRODUCTO ---
+//
+// Antes recorria las tarjetas ya pintadas y escondia las que no
+// coincidian. Eso solo puede encontrar lo que YA se habia descargado.
+// Ahora la busqueda la hace el servidor, que si tiene el catalogo
+// entero y un indice de texto.
+let temporizadorBusqueda = null;
+
 function buscarProducto(){
 
-    let texto = document.getElementById("buscarInput").value.toLowerCase().trim();
-    let categoria = document.getElementById("categoria").value;
-    let productos = document.querySelectorAll(".card");
+    const seccion = document.querySelector(".products");
+    if (seccion) seccion.scrollIntoView({ behavior: "smooth" });
 
-    // Ir a la seccion de productos
-    let seccion = document.querySelector(".products");
-    if(seccion){
-        seccion.scrollIntoView({ behavior:"smooth" });
-    }
-
-    productos.forEach(function(producto){
-
-        let nombre = producto.getAttribute("data-nombre").toLowerCase();
-        let cat = producto.getAttribute("data-categoria");
-
-        let coincideNombre = nombre.includes(texto);
-        let coincideCategoria = (categoria === "todo" || categoria === cat);
-
-     if (coincideNombre && coincideCategoria) {
-
-    producto.style.display = "block";
-    producto.style.opacity = "1";
-    producto.style.transform = "scale(1)";
-    producto.style.pointerEvents = "auto";
-
-} else {
-
-    producto.style.display = "none";
+    /* Se escribe letra a letra: se espera un momento antes de
+       preguntar, para no lanzar una peticion por cada tecla */
+    clearTimeout(temporizadorBusqueda);
+    temporizadorBusqueda = setTimeout(cargarProductos, 250);
 
 }
 
-    });
 
+function filtrosActuales() {
+  const valor = id => {
+    const el = document.getElementById(id);
+    return el ? el.value : "";
+  };
+
+  const parametros = new URLSearchParams();
+
+  const buscar = valor("buscarInput").trim();
+  if (buscar) parametros.set("q", buscar);
+
+  /* El buscador de la barra y el filtro lateral son dos desplegables
+     distintos; gana el que no este en "todo" */
+  const categoria = valor("filtroCategoria") || valor("categoria");
+  if (categoria && categoria !== "todo") parametros.set("categoria", categoria);
+
+  const condicion = valor("filtroCondicion");
+  if (condicion && condicion !== "todo") parametros.set("condicion", condicion);
+
+  const precio = valor("filtroPrecio");
+  if (precio && precio !== "todos") {
+    const [min, max] = precio.split("-");
+    if (min) parametros.set("min", min);
+    if (max) parametros.set("max", max);
+  }
+
+  /* El desplegable de la pagina usa sus propios nombres; se traducen
+     a los que entiende el servidor */
+  const ORDENES = {
+    precioMenor: "precio-asc",
+    precioMayor: "precio-desc",
+    best: "recientes",
+    vendidos: "recientes"
+  };
+
+  const orden = ORDENES[valor("ordenar")];
+  if (orden) parametros.set("orden", orden);
+
+  return parametros;
 }
 
-// --- USUARIO LOGUEADO ---
-document.addEventListener("DOMContentLoaded", function () {
-    let usuario = localStorage.getItem("usuarioLogueado");
-    if (usuario) {
-
-    const loginLink = document.getElementById("loginLink");
-    const registerLink = document.getElementById("registerLink");
-    const usuarioMenu = document.getElementById("usuarioMenu");
-    const usuarioNombre = document.getElementById("usuarioNombre");
-    const carritoLink = document.getElementById("carritoLink");
-
-    if (loginLink) {
-        loginLink.style.display = "none";
-    }
-
-    if (registerLink) {
-        registerLink.style.display = "none";
-    }
-
-    if (usuarioMenu) {
-        usuarioMenu.style.display = "inline-block";
-    }
-
-    if (usuarioNombre) {
-        usuarioNombre.innerText = usuario;
-    }
-
-    if (carritoLink) {
-        carritoLink.style.display = "inline-block";
-    }
-}
-
-    let cantidad = localStorage.getItem("carritoCantidad");
-    if(cantidad){
-        let contador = document.getElementById("carritoCantidad");
-        if(contador){
-            contador.innerText = cantidad;
-        }
-    }
-
-    cargarProductos();
-});
-
-// --- MENU USUARIO ---
-function toggleMenu(){
-    let menu = document.getElementById("menuDesplegable");
-    menu.classList.toggle("show");
-}
-document.addEventListener("click", function(event){
-    let menu = document.getElementById("menuDesplegable");
-    let boton = document.querySelector(".usuario-btn");
-    if(boton && menu && !boton.contains(event.target) && !menu.contains(event.target)) {
-        menu.classList.remove("show");
-    }
-});
-
-// --- CERRAR SESION ---
-// Definida una sola vez en sesion.js: avisa al servidor de que cierre
-// la sesion y despues limpia el navegador. Borrar solo localStorage
-// dejaba la sesion abierta en el servidor.
-
-
-
-// --- PANEL CARRITO ---
-function abrirCarrito(){ document.getElementById("carritoPanel").classList.add("abierto"); cargarCarrito(); }
-function cerrarCarrito(){ document.getElementById("carritoPanel").classList.remove("abierto"); }
-function abrirCarritoSeguro(e){
-    e.preventDefault();
-    let usuario = localStorage.getItem("usuarioLogueado");
-    if(!usuario){
-        alert("Debes iniciar sesion para ver el carrito");
-        window.location.href="login.html";
-        return;
-    }
-    window.location.href="carrito.html";
-}
-
-// --- CARGAR PRODUCTOS ---
 async function cargarProductos(){
 
-  const res = await fetch("/all-ads");
+  const parametros = filtrosActuales();
+
+  const res = await fetch("/all-ads?" + parametros.toString());
   const productos = await res.json();
 
 let contenedor = document.getElementById("productosContainer");
@@ -334,7 +282,13 @@ if (!contenedor) return;
 
 contenedor.innerHTML = "";
 
-  productos.slice().reverse().forEach((p)=>{
+if (!Array.isArray(productos) || productos.length === 0) {
+  contenedor.innerHTML =
+    "<p class='sin-resultados'>No encontramos productos con esos filtros.</p>";
+  return;
+}
+
+  productos.forEach((p)=>{
 
     let card = document.createElement("div");
 
@@ -422,7 +376,14 @@ ${p.sellerName}
     </div>
     `;
 
-    contenedor.prepend(card);
+    /* appendChild, NO prepend.
+
+       El codigo original insertaba cada tarjeta al PRINCIPIO y por eso
+       recorria la lista con .reverse() antes: dos vueltas al reves
+       daban el orden bueno. Al pasar el orden al servidor quite el
+       .reverse(), pero el prepend seguia ahi y dejaba la lista al
+       reves: pedir "precio menor" mostraba el mas caro primero. */
+    contenedor.appendChild(card);
 
   });
 
@@ -458,31 +419,13 @@ function vistaLista(){
 }
 
 
+/* Ordenar lo hace el servidor.
+
+   Antes se reordenaban las tarjetas ya pintadas leyendo el precio del
+   TEXTO de la tarjeta con parseInt("RD$ 10,000"), que da 10 y no
+   10000. Ademas solo podia ordenar lo que ya estaba descargado. */
 function ordenarProductos(){
-
-let grid = document.querySelector(".grid");
-
-let productos = [...document.querySelectorAll(".card")];
-
-let tipo = document.getElementById("ordenar").value;
-
-productos.sort((a,b)=>{
-
-let precioA = parseInt(a.querySelector(".price").innerText.replace("$",""));
-let precioB = parseInt(b.querySelector(".price").innerText.replace("$",""));
-
-if(tipo==="precioMenor") return precioA-precioB;
-
-if(tipo==="precioMayor") return precioB-precioA;
-
-return 0;
-
-});
-
-grid.innerHTML="";
-
-productos.forEach(p=>grid.appendChild(p));
-
+  cargarProductos();
 }
 
 function actualizarContadorCarrito(){
@@ -502,48 +445,136 @@ window.addEventListener("load", function(){
 });
 
 
+/* Antes esto recorria las tarjetas ya dibujadas y las escondia con
+   display:none. El resultado parecia un filtro, pero el navegador
+   seguia teniendo el catalogo entero y la paginacion contaba mal.
+   Ahora se le pide al servidor la lista que corresponde. */
 function filtrarTodo() {
-
-  let categoria = document.getElementById("filtroCategoria").value;
-  let precio = document.getElementById("filtroPrecio").value;
-  let condicion = document.getElementById("filtroCondicion").value;
-
- let productos = document.querySelectorAll("#productosContainer .card");
-
-  productos.forEach(producto => {
-
-    let cat = producto.dataset.categoria;
-    let prec = parseInt(producto.dataset.precio);
-    let cond = producto.dataset.condicion;
-
-    let mostrar = true;
-
-    // FILTRO CATEGORIA
-    if (categoria !== "todo" && cat !== categoria) {
-      mostrar = false;
-    }
-
-    // FILTRO PRECIO
-    if (precio !== "todos") {
-      let [min, max] = precio.split("-").map(Number);
-      if (prec < min || prec > max) {
-        mostrar = false;
-      }
-    }
-
-    // FILTRO CONDICION
-    if (condicion !== "todo" && cond !== condicion) {
-      mostrar = false;
-    }
-
-    // MOSTRAR / OCULTAR
-    producto.style.display = mostrar ? "block" : "none";
-
-  });
-
+  cargarProductos();
 }
 
 
 
 
 
+
+
+
+
+/* =========================
+   MENU DE USUARIO Y PANEL DEL CARRITO
+
+   Estas cuatro funciones las llama el HTML de la portada con onclick.
+   (Se rescataron del control de versiones: una edicion anterior mia
+   las borro sin querer al reemplazar un bloque por posicion.)
+========================= */
+
+function toggleMenu(){
+    const menu = document.getElementById("menuDesplegable");
+    if (menu) menu.classList.toggle("show");
+}
+
+function abrirCarrito(){
+    const panel = document.getElementById("carritoPanel");
+    if (!panel) return;
+    panel.classList.add("abierto");
+    cargarCarrito();
+}
+
+function cerrarCarrito(){
+    const panel = document.getElementById("carritoPanel");
+    if (panel) panel.classList.remove("abierto");
+}
+
+function abrirCarritoSeguro(e){
+    if (e) e.preventDefault();
+
+    const usuario = localStorage.getItem("usuarioLogueado");
+
+    if(!usuario){
+        alert("Debes iniciar sesion para ver el carrito");
+        window.location.href = "login.html";
+        return;
+    }
+
+    window.location.href = "carrito.html";
+}
+
+
+/* =========================
+   CATEGORIAS AUTOMATICAS
+
+   Los desplegables de categoria estaban escritos a mano en el HTML
+   (telefonos, consolas, tv, computadoras). Si alguien publicaba en
+   "muebles", esa categoria no aparecia por ningun lado y el producto
+   no se podia filtrar.
+
+   El servidor ya devolvia /categorias con las categorias que existen
+   de verdad y cuantos productos hay en cada una; nadie lo usaba.
+========================= */
+
+async function cargarCategorias() {
+  const selects = [
+    document.getElementById("categoria"),        // el de la barra de busqueda
+    document.getElementById("filtroCategoria")   // el del panel de filtros
+  ].filter(Boolean);
+
+  if (selects.length === 0) return;
+
+  let categorias = [];
+
+  try {
+    const res = await fetch("/categorias");
+    categorias = await res.json();
+  } catch (error) {
+    /* Si falla, se dejan las opciones que ya trae el HTML */
+    console.error("No se pudieron cargar las categorias:", error);
+    return;
+  }
+
+  if (!Array.isArray(categorias) || categorias.length === 0) return;
+
+  selects.forEach(select => {
+    const elegida = select.value;
+
+    select.innerHTML =
+      '<option value="todo">Todo</option>' +
+      categorias
+        .map(c => {
+          const valor = String(c.categoria)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/"/g, "&quot;");
+
+          return `<option value="${valor}">${valor} (${c.total})</option>`;
+        })
+        .join("");
+
+    /* Si el usuario ya tenia una elegida, se respeta */
+    if (elegida) select.value = elegida;
+    if (!select.value) select.value = "todo";
+  });
+}
+
+/* Al abrir la portada: primero las categorias reales, despues los
+   productos con los filtros que haya */
+/* Arranque de la portada.
+
+   Primero las categorias reales y despues el catalogo. Antes de esto
+   habia otro bloque DOMContentLoaded que llamaba a cargarProductos();
+   al reemplazar el buscador por posicion me lo lleve por delante y la
+   portada se quedaba vacia hasta que tocabas un filtro. */
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!document.getElementById("productosContainer")) return;
+
+  /* Las categorias primero: asi el desplegable ya tiene las opciones
+     reales cuando el usuario llega */
+  await cargarCategorias();
+
+  cargarProductos();
+
+  const contador = document.getElementById("carritoCantidad");
+  const cantidad = localStorage.getItem("carritoCantidad");
+
+  if (contador && cantidad) contador.innerText = cantidad;
+});

@@ -19,6 +19,10 @@
   <button class="btn" onclick="mostrarSeccion('productos')">
     📦 Productos
   </button>
+  <button class="btn" onclick="mostrarSeccion('pedidos')">
+    📬 Pedidos recibidos
+    <span id="contadorPedidos" class="badge-pedidos"></span>
+  </button>
   <button class="btn" onclick="mostrarSeccion('ventas')">
     💰 Ventas
   </button>
@@ -142,6 +146,25 @@
       </div>
 
       <!-- MIS VENTAS -->
+      <!-- PEDIDOS RECIBIDOS (vendedor) -->
+      <div id="seccion-pedidos" class="seccion" style="display:none;">
+        <h2>📬 Pedidos que te han hecho</h2>
+
+        <div class="filtros-pedidos">
+          <label for="filtroEstado">Ver:</label>
+          <select id="filtroEstado" onchange="verPedidos()">
+            <option value="">Todos</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="confirmado">Confirmados</option>
+            <option value="enviado">Enviados</option>
+            <option value="entregado">Entregados</option>
+            <option value="cancelado">Cancelados</option>
+          </select>
+        </div>
+
+        <div id="listaPedidos"></div>
+      </div>
+
       <div id="seccion-ventas" class="seccion" style="display:none;">
         <h2>💰 Mis ventas</h2>
         <div id="listaVentas"></div>

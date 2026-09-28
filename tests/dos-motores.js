@@ -134,7 +134,8 @@ function correrScript(script, env = {}) {
 
   const limites = {
     LOGIN_MAX_INTENTOS: "500",
-    API_MAX_PETICIONES: "9000"
+    API_MAX_PETICIONES: "9000",
+    REGISTRO_MAX_CUENTAS: "5000"
   };
 
   try {

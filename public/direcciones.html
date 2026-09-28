@@ -32,22 +32,43 @@
     </section>
 
 
-    <!-- DIRECCIÓN PRINCIPAL -->
+    <!-- DIRECCIONES GUARDADAS -->
+    <section class="direccion-card">
+      <div class="card-header">
+        <div>
+          <h2>Mis direcciones</h2>
+          <p>Puedes guardar varias y elegir cuál usar al comprar.</p>
+        </div>
+      </div>
+
+      <div id="listaDirecciones" class="lista-direcciones">
+        <p class="cargando">Cargando...</p>
+      </div>
+    </section>
+
+
+    <!-- ANADIR / EDITAR DIRECCIÓN -->
     <section class="direccion-card">
 
       <div class="card-header">
 
         <div>
-          <h2>Dirección principal</h2>
+          <h2 id="tituloFormulario">Agregar una dirección</h2>
 
           <p>
             Esta dirección se utilizará para recibir tus compras.
           </p>
         </div>
 
-        <span class="direccion-badge">
-          Principal
-        </span>
+        <button
+          type="button"
+          id="btnCancelarEdicion"
+          class="btn-cancelar-edicion"
+          style="display:none;"
+          onclick="cancelarEdicion()"
+        >
+          Cancelar edición
+        </button>
 
       </div>
 
@@ -56,6 +77,23 @@
       <form id="formDireccion">
 
         <div class="form-grid">
+
+          <!-- NOMBRE DE LA DIRECCIÓN -->
+          <div class="campo">
+
+            <label for="nombreDireccion">
+              Nombre de la dirección
+            </label>
+
+            <input
+              type="text"
+              id="nombreDireccion"
+              placeholder="Casa, Trabajo, Casa de mi mamá..."
+              maxlength="80"
+            >
+
+          </div>
+
 
           <!-- TELÉFONO -->
           <div class="campo">

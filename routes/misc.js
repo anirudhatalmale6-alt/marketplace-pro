@@ -132,11 +132,18 @@ router.get("/favoritos/check", requireAuth, async (req, res, next) => {
    CENTRO DE RESOLUCION
 ========================= */
 
+/* Las cuatro primeras son las que ofrece resolucion.html en pantalla.
+   Las demas se dejan admitidas porque ya estaban documentadas y no
+   cuesta nada mantenerlas. Si se anade un boton nuevo a la pagina,
+   su valor tiene que estar en esta lista o el servidor lo rechaza. */
 const TIPOS_CASO = [
+  "compra",
+  "pago",
+  "pedido",
+  "devolucion",
   "producto-no-recibido",
   "producto-danado",
   "producto-diferente",
-  "devolucion",
   "problema-pago",
   "otro"
 ];
