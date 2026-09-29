@@ -21,6 +21,7 @@
 const express = require("express");
 
 const store = require("../lib/store");
+const correo = require("../lib/correo");
 const { normalizarEmail, requireAuth } = require("../lib/auth");
 
 const router = express.Router();
@@ -42,6 +43,42 @@ const ESTADOS_FINALES = ["entregado", "cancelado"];
 
 function normalizarEstado(valor) {
   return String(valor || "").trim().toLowerCase();
+}
+
+/* =========================
+   AVISOS POR CORREO
+
+   Regla: un correo que falla NO puede tumbar la operacion. La compra
+   ya esta hecha y el stock ya esta descontado; si el aviso no sale,
+   se anota en la consola y punto. Por eso ninguna de estas llamadas
+   se hace con await dentro del camino critico.
+
+   Y se respeta lo que el usuario eligio en su configuracion: si
+   apago "correoNotificaciones", no se le escribe.
+========================= */
+
+async function avisar(emailDestino, construirPlantilla) {
+  try {
+    const usuario = await store.findOne("users", { email: emailDestino });
+
+    if (!usuario) return;
+
+    const config = usuario.configuracion || {};
+
+    /* Si nunca toco la configuracion, config.correoNotificaciones es
+       undefined: se toma como SI, que es el valor por defecto. */
+    if (config.correoNotificaciones === false) return;
+
+    const plantilla = construirPlantilla(usuario);
+
+    await correo.enviar({
+      para: emailDestino,
+      asunto: plantilla.asunto,
+      html: plantilla.html
+    });
+  } catch (error) {
+    console.error(`Aviso a ${emailDestino} no enviado: ${error.message}`);
+  }
 }
 
 /* Devuelve al anuncio las unidades que se habian reservado.
@@ -288,6 +325,16 @@ async function crearPedido(req, res, next) {
       }
 
       creados.push(orden);
+
+      /* Aviso al vendedor. Sin await a proposito: el comprador no
+         tiene que esperar a que salga un correo para ver su compra
+         confirmada. */
+      avisar(vendedor, u =>
+        correo.correoNuevoPedido(
+          u.nombre || u.businessName || vendedor,
+          orden
+        )
+      );
     }
 
     console.log(
@@ -496,6 +543,14 @@ router.put("/update-order-status/:id", requireAuth, async (req, res, next) => {
       await store.updateOne("sales", { id: v.id }, { estado: resultado.orden.estado });
       /* eslint-enable no-await-in-loop */
     }
+
+    /* Aviso al comprador del cambio de estado */
+    avisar(normalizarEmail(resultado.orden.comprador), u =>
+      correo.correoEstadoPedido(
+        u.nombre || u.businessName || resultado.orden.comprador,
+        resultado.orden
+      )
+    );
 
     res.json({
       message: "Estado actualizado",

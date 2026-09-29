@@ -67,6 +67,8 @@ server.js              Monta la aplicacion y arranca. Nada mas.
 
 lib/
   paths.js             Rutas absolutas del proyecto.
+  correo.js            UNICO sitio desde donde sale correo.
+  tokens.js            Enlaces de un solo uso (clave / verificacion).
   store.js             UNICO punto de acceso a los datos. Elige motor.
   store-mongo.js         motor MongoDB   (si hay MONGODB_URI)
   store-json.js          motor archivos  (si no la hay)
@@ -113,6 +115,7 @@ tests/                 Pruebas automaticas
 | `npm run limpiar-pruebas` | Borra los datos que crean las pruebas |
 | `npm run migrar-mongo` | Copia los datos de data/ a MongoDB y comprueba uno a uno que llegaron |
 | `npm run test-motores` | Pasa las mismas pruebas con archivos Y con MongoDB, y compara |
+| `npm run test-correo` | Levanta un SMTP de mentira y comprueba que los correos SALEN |
 
 Para las pruebas del navegador (necesitan Python y Playwright):
 
@@ -196,13 +199,66 @@ busqueda por texto en titulo y descripcion.
 
 ---
 
+---
+
+## Correo
+
+Todo el correo sale de `lib/correo.js`, y funciona en dos modos segun
+el `.env`:
+
+| `SMTP_HOST` | Que pasa |
+|---|---|
+| vacio | **Modo pruebas.** No se envia nada. El correo entero se guarda en `data/correos.log` y sale por consola |
+| con valor | Se envia de verdad |
+
+En modo pruebas el servidor **nunca dice que envio**: la respuesta del
+registro lleva `verificacion: "no_enviada"` y en el arranque sale un
+aviso. Un correo que no sale no se cuenta como enviado.
+
+Para activarlo, rellena `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER` y
+`SMTP_PASS`. Sirve Gmail (con "contrasena de aplicacion"), Brevo,
+SendGrid o Mailgun; los tres ultimos tienen plan gratuito suficiente
+para empezar.
+
+**`URL_PUBLICA` es obligatoria en produccion.** Es lo que se pone
+dentro de los enlaces de los correos. Si apunta a `localhost`, los
+enlaces que reciban tus usuarios no llevaran a ninguna parte.
+
+### Que correos se mandan
+
+| Cuando | A quien |
+|---|---|
+| Se registra alguien | Confirmacion de su correo |
+| Pide recuperar la contrasena | Enlace para elegir una nueva (vale 1 hora) |
+| Le compran algo | Aviso al vendedor con el pedido |
+| Cambia el estado de un pedido | Aviso al comprador |
+
+Los avisos de pedido respetan la configuracion del usuario: si apaga
+"correoNotificaciones" en su cuenta, no se le escribe.
+
+### Los enlaces de un solo uso
+
+- Se generan con `crypto.randomBytes(32)`, no con la fecha.
+- **En la base de datos se guarda el HASH, no el enlace.** Quien lea la
+  base de datos no puede usar lo que ve para entrar en ninguna cuenta.
+- Caducan: 1 hora los de contrasena, 24 horas los de confirmar correo.
+- Un solo uso: al usarlos se borran.
+- Al cambiar la contrasena se anulan los demas enlaces **de
+  recuperacion**. El de confirmar el correo NO se toca, porque no da
+  acceso a nada y anularlo solo molesta al usuario.
+
+`/forgot-password` responde **siempre lo mismo**, exista el correo o
+no. Si contestara distinto, cualquiera podria usar ese formulario para
+averiguar que correos estan registrados en el sitio.
+
+---
+
 ## Pendiente
 
 - **Chat**: `public/chat.js` guarda los mensajes en el navegador de
   quien escribe. No hay backend de chat todavia, asi que los mensajes
   no llegan al otro usuario.
-- **Centro de resolucion**: el servidor ya tiene los endpoints; la
-  pagina todavia guarda en el navegador.
+- **Panel de administrador**: no existe todavia.
 - **El listado publico `/all-ads`** todavia lee el catalogo completo y
   filtra en memoria. Con los productos actuales va sobrado; conviene
   pasarlo a consulta con indice antes de tener miles de anuncios.

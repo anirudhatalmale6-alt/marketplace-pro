@@ -14,3 +14,5 @@ backups/
 
 npm-debug.log*
 .DS_Store
+data/correos.log
+data/buzon-de-pruebas.json

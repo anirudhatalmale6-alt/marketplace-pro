@@ -205,6 +205,8 @@ app.use((error, req, res, next) => {
 const PORT = Number(process.env.PORT) || 3000;
 
 const store = require("./lib/store");
+const correo = require("./lib/correo");
+const tokens = require("./lib/tokens");
 
 let server = null;
 
@@ -215,8 +217,21 @@ let server = null;
    fallarian sin motivo aparente. */
 store
   .conectar()
-  .then(({ motor, destino }) => {
+  .then(async ({ motor, destino }) => {
     console.log(`Datos: ${motor} (${destino})`);
+
+    /* El correo se comprueba al arrancar, no la primera vez que
+       alguien lo necesita: asi un SMTP mal configurado se ve en el
+       arranque y no cuando un usuario pide recuperar su contrasena. */
+    await correo.iniciar();
+
+    /* Los enlaces caducados se van borrando solos. Sin esto la
+       coleccion crece para siempre. */
+    tokens.limpiarCaducados().catch(() => {});
+
+    setInterval(() => {
+      tokens.limpiarCaducados().catch(() => {});
+    }, 6 * 60 * 60 * 1000).unref();
 
     server = app.listen(PORT, () => {
       console.log(`Servidor corriendo en http://localhost:${PORT}`);

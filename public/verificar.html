@@ -1,0 +1,104 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confirmar correo</title>
+
+<link rel="stylesheet" href="tema.css">
+<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="responsive.css">
+
+<style>
+  .caja-clave {
+    max-width: 440px;
+    margin: 80px auto;
+    background: #fff;
+    padding: 36px 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+    text-align: center;
+  }
+
+  .caja-clave h1 { margin: 0 0 12px; font-size: 22px; }
+
+  .caja-clave p { color: #555; font-size: 15px; line-height: 1.6; }
+
+  .icono { font-size: 46px; margin-bottom: 10px; }
+
+  .boton {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 13px 28px;
+    border: none;
+    border-radius: 8px;
+    background: #1a73e8;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .secundario {
+    display: block;
+    margin-top: 16px;
+    color: #1a73e8;
+    text-decoration: none;
+    font-size: 14px;
+  }
+</style>
+
+<div class="caja-clave" id="caja">
+  <div class="icono">⏳</div>
+  <h1>Confirmando tu correo...</h1>
+  <p>Un momento.</p>
+</div>
+
+<script src="sesion.js"></script>
+<script>
+const token = new URLSearchParams(window.location.search).get("token") || "";
+const caja = document.getElementById("caja");
+
+function pintar(icono, titulo, texto, botones) {
+  caja.innerHTML =
+    `<div class="icono">${icono}</div>
+     <h1>${titulo}</h1>
+     <p>${texto}</p>
+     ${botones || ""}`;
+}
+
+(async () => {
+  if (!token) {
+    pintar(
+      "✉️",
+      "Enlace incompleto",
+      "Este enlace no trae el código de confirmación. Ábrelo tal cual " +
+      "viene en el correo, sin cortarlo.",
+      '<a href="index.html" class="secundario">Ir al inicio</a>'
+    );
+    return;
+  }
+
+  const { ok, datos } = await Sesion.api("/verify-email", {
+    method: "POST",
+    body: { token }
+  });
+
+  if (ok) {
+    pintar(
+      "✅",
+      "Correo confirmado",
+      "Gracias. Tu cuenta ya está verificada.",
+      '<a href="index.html" class="boton">Ir a la tienda</a>'
+    );
+    return;
+  }
+
+  pintar(
+    "⚠️",
+    "No se pudo confirmar",
+    (datos && datos.message) ||
+      "El enlace ya no vale. Entra en tu cuenta y pide que te lo envíen otra vez.",
+    '<a href="login.html" class="boton">Iniciar sesión</a>' +
+    '<a href="index.html" class="secundario">Ir al inicio</a>'
+  );
+})();
+</script>

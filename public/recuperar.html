@@ -1,0 +1,138 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recuperar contraseña</title>
+
+<link rel="stylesheet" href="tema.css">
+<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="responsive.css">
+
+<style>
+  .caja-clave {
+    max-width: 420px;
+    margin: 80px auto;
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+  }
+
+  .caja-clave h1 { margin: 0 0 8px; font-size: 22px; }
+
+  .caja-clave .explicacion {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 22px;
+  }
+
+  .caja-clave label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  .caja-clave input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .caja-clave button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #1a73e8;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .caja-clave button:disabled { opacity: .6; cursor: wait; }
+
+  .caja-clave .volver {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    color: #1a73e8;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .aviso {
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+    display: none;
+  }
+
+  .aviso.ok { background: #e2f7e6; color: #1b6b2c; border: 1px solid #b7e4c1; }
+  .aviso.mal { background: #fde4e2; color: #98221a; border: 1px solid #f0b8b3; }
+</style>
+
+<div class="caja-clave">
+
+  <h1>¿Olvidaste tu contraseña?</h1>
+
+  <p class="explicacion">
+    Escribe el correo con el que te registraste y te enviamos un enlace
+    para elegir una nueva. El enlace vale una hora.
+  </p>
+
+  <div id="aviso" class="aviso"></div>
+
+  <form id="formRecuperar">
+    <label for="email">Correo electrónico</label>
+    <input
+      type="email"
+      id="email"
+      placeholder="tucorreo@ejemplo.com"
+      autocomplete="email"
+      required
+    >
+
+    <button type="submit" id="btnEnviar">Enviar enlace</button>
+  </form>
+
+  <a href="login.html" class="volver">Volver a iniciar sesión</a>
+
+</div>
+
+<script src="sesion.js"></script>
+<script>
+document.getElementById("formRecuperar").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const boton = document.getElementById("btnEnviar");
+  const aviso = document.getElementById("aviso");
+  const email = document.getElementById("email").value.trim();
+
+  boton.disabled = true;
+  aviso.style.display = "none";
+
+  const { ok, datos } = await Sesion.api("/forgot-password", {
+    method: "POST",
+    body: { email }
+  });
+
+  boton.disabled = false;
+
+  // El servidor responde lo mismo exista o no el correo, a proposito:
+  // si contestara distinto, cualquiera podria averiguar que correos
+  // estan registrados aqui.
+  aviso.className = "aviso " + (ok ? "ok" : "mal");
+  aviso.textContent =
+    (datos && datos.message) ||
+    (ok ? "Revisa tu correo." : "No se pudo enviar. Intenta de nuevo.");
+  aviso.style.display = "block";
+
+  if (ok) document.getElementById("formRecuperar").reset();
+});
+</script>

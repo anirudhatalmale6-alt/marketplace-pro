@@ -1,0 +1,175 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elegir contraseña nueva</title>
+
+<link rel="stylesheet" href="tema.css">
+<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="responsive.css">
+
+<style>
+  .caja-clave {
+    max-width: 420px;
+    margin: 80px auto;
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+  }
+
+  .caja-clave h1 { margin: 0 0 8px; font-size: 22px; }
+
+  .caja-clave .explicacion {
+    color: #666; font-size: 14px; line-height: 1.5; margin: 0 0 22px;
+  }
+
+  .caja-clave label {
+    display: block; font-weight: bold; margin-bottom: 6px; font-size: 14px;
+  }
+
+  .caja-clave input {
+    width: 100%; padding: 12px; border: 1px solid #ccc;
+    border-radius: 8px; font-size: 16px; margin-bottom: 6px;
+  }
+
+  .pista { font-size: 12px; color: #888; margin: 0 0 16px; }
+
+  .caja-clave button {
+    width: 100%; padding: 13px; border: none; border-radius: 8px;
+    background: #1a73e8; color: #fff; font-size: 16px;
+    font-weight: bold; cursor: pointer;
+  }
+
+  .caja-clave button:disabled { opacity: .6; cursor: wait; }
+
+  .caja-clave .volver {
+    display: block; text-align: center; margin-top: 18px;
+    color: #1a73e8; text-decoration: none; font-size: 14px;
+  }
+
+  .aviso {
+    padding: 14px; border-radius: 8px; font-size: 14px;
+    line-height: 1.5; margin-bottom: 18px; display: none;
+  }
+
+  .aviso.ok { background: #e2f7e6; color: #1b6b2c; border: 1px solid #b7e4c1; }
+  .aviso.mal { background: #fde4e2; color: #98221a; border: 1px solid #f0b8b3; }
+
+  #cargando { text-align: center; color: #666; padding: 20px 0; }
+</style>
+
+<div class="caja-clave">
+
+  <h1>Elige una contraseña nueva</h1>
+
+  <div id="cargando">Comprobando el enlace...</div>
+
+  <div id="aviso" class="aviso"></div>
+
+  <form id="formNueva" style="display:none;">
+
+    <p class="explicacion">
+      Escríbela dos veces para asegurarnos de que no hay una errata.
+    </p>
+
+    <label for="clave1">Contraseña nueva</label>
+    <input type="password" id="clave1" autocomplete="new-password" required>
+    <p class="pista">Mínimo 8 caracteres.</p>
+
+    <label for="clave2">Repítela</label>
+    <input type="password" id="clave2" autocomplete="new-password" required>
+    <p class="pista"></p>
+
+    <button type="submit" id="btnGuardar">Guardar contraseña</button>
+
+  </form>
+
+  <a href="login.html" class="volver">Ir a iniciar sesión</a>
+
+</div>
+
+<script src="sesion.js"></script>
+<script>
+const token = new URLSearchParams(window.location.search).get("token") || "";
+
+const aviso = document.getElementById("aviso");
+const cargando = document.getElementById("cargando");
+const formulario = document.getElementById("formNueva");
+
+function mostrarAviso(texto, tipo) {
+  aviso.className = "aviso " + tipo;
+  aviso.textContent = texto;
+  aviso.style.display = "block";
+}
+
+/* Se comprueba el enlace ANTES de enseñar el formulario.
+   Si no, la persona escribe una contraseña nueva dos veces y solo
+   entonces se entera de que el enlace había caducado. */
+(async () => {
+  if (!token) {
+    cargando.style.display = "none";
+    mostrarAviso(
+      "Este enlace está incompleto. Vuelve a pedir uno desde " +
+      "'¿Olvidaste tu contraseña?'.",
+      "mal"
+    );
+    return;
+  }
+
+  const { ok, datos } = await Sesion.api(
+    "/reset-password/check?token=" + encodeURIComponent(token)
+  );
+
+  cargando.style.display = "none";
+
+  if (!ok || !datos || !datos.valido) {
+    mostrarAviso(
+      "Este enlace ya no vale. Puede que haya caducado (duran una hora) " +
+      "o que ya lo hayas usado. Pide uno nuevo.",
+      "mal"
+    );
+    return;
+  }
+
+  formulario.style.display = "block";
+})();
+
+formulario.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const clave1 = document.getElementById("clave1").value;
+  const clave2 = document.getElementById("clave2").value;
+  const boton = document.getElementById("btnGuardar");
+
+  if (clave1.length < 8) {
+    mostrarAviso("La contraseña debe tener al menos 8 caracteres.", "mal");
+    return;
+  }
+
+  if (clave1 !== clave2) {
+    mostrarAviso("Las dos contraseñas no coinciden.", "mal");
+    return;
+  }
+
+  boton.disabled = true;
+
+  const { ok, datos } = await Sesion.api("/reset-password", {
+    method: "POST",
+    body: { token, password: clave1 }
+  });
+
+  boton.disabled = false;
+
+  if (!ok) {
+    mostrarAviso((datos && datos.message) || "No se pudo cambiar.", "mal");
+    return;
+  }
+
+  formulario.style.display = "none";
+  mostrarAviso(
+    "Listo. Tu contraseña se cambió. Te llevamos a iniciar sesión...",
+    "ok"
+  );
+
+  setTimeout(() => { window.location.href = "login.html"; }, 2500);
+});
+</script>
